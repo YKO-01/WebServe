@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/01 19:42:25 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/03 15:56:05 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void host_pars(Config &sv,std::string line)
         {
             if(resl[i].find_first_not_of("0123456789") != std::string::npos)
                 ft_exit("host::error alphabetic");
-            if(resl[i][0] == '0')
+            if(resl[i][0] == '0' && resl[i].size() != 1)
                 ft_exit("host::error 0");
             if(std::stoi(resl[i]) < 0 || std::stoi(resl[i]) > 255)
                 ft_exit("host::error range");
@@ -316,7 +316,10 @@ void router_pars(Config &sv,std::vector<std::string> infos)
             std::string info = trim_and_check_exist(infos[i],"router_directory:: error ",1);
             if(info.find_first_not_of("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-./\"") != std::string::npos)
                 ft_exit("router_directory:: error alphabetic");
-            route.set_directory(remove_quots(info));
+            info = remove_quots(info);
+            if(info[info.size() - 1] != '/')
+                info += "/";
+            route.set_directory(info);
         }
         else if(infos[i].find("redirect:") != std::string::npos)
         {
@@ -495,7 +498,7 @@ void	Config::parssConfigs(char **av)
     vecOfvecOfPair server_router_info = split_router(big_vec);
     Config servers;
     all_info = insert_data_to_server(server_router_info, servers);
-    display_info(all_info);
+    // display_info(all_info);
 }
 
 int main(int argc, char const *argv[])
