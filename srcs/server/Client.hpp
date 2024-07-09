@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 07:43:16 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/10 15:09:04 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/01 19:36:18 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ class Client
 		bool isBody;
 		std::string body;
 		size_t lastActivity;
+		size_t timeKeepAlive;
+		bool isKeepAlive;
 	public:
 		Client();
 		~Client();

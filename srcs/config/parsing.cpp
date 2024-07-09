@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/06/10 13:10:33 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/06/27 21:33:32 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -462,8 +462,11 @@ void display_info(std::vector<Config> all_info)
 void	Config::parssConfigs(char **av)
 {
     std::string myText;
-    std::ifstream MyReadFile(av[1]);
-    
+    std::ifstream MyReadFile;
+    if (av[1] == NULL)
+        MyReadFile.open("default.conf");
+    else
+        MyReadFile.open(av[1]);
     std::vector<std::string > vct;
     std::vector<std::vector<std::string> > big_vec;
     std::pair<std::string, std::string> pair;

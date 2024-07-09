@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/10 15:12:17 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/01 19:12:55 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,8 +318,8 @@ String	HTTPParser::getBody(void)
 
 http_keepalive_t	HTTPParser::getConnectionType(void)
 {
-	//if (!getHeader("connection").compare("close"))
-	//	return (HTTP_KEEPALIVE_OFF);
+	// if (!getHeader("connection").compare("close"))
+	// 	return (HTTP_KEEPALIVE_OFF);
 	return (HTTP_KEEPALIVE_ON);
 }
 

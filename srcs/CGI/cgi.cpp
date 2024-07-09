@@ -7,8 +7,8 @@
 #include<vector>
 #include<cstddef>
 #include<sstream>
-#include "../../incs/Config.hpp"
-#include "../../incs/Cgi.hpp"
+#include "../config/Config.hpp"
+#include "Cgi.hpp"
 
 CGI::CGI(std::map<std::string, std::string> envi)
 {

@@ -3,28 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:37:11 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/03 10:03:04 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/09 19:25:04 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Session.hpp"
 #include <unistd.h>
 
+using namespace std;
 int main(int ac, char **av, char **env)
 {
+	(void)env;
 	Session _session;
-	if (ac != 2)
-		return (0);	
+	if (ac < 2)
+		return (0);
+
 	chdir("sessions");
+	MapDataSession dataSession;
 
-	std::string data = av[1];
-
+	dataSession = _session.parseArg(av);
+	if (_session.checkFirstArgIsSessionID(dataSession) == true)
+	{
+		std::string sessionID = dataSession.find("sessionID")->second;
+		if (_session.validSession(sessionID) == false)
+		{
+			std::cout << "session not valid" << std::endl;
+			return (1);
+		}
+		_session.setSession(sessionID, av);
+		return (0);
+	}
 	std::string sessionID = _session.createSession();
 	std::cout << sessionID << std::endl;
-	_session.setSession(sessionID, data);
-	std::cout << _session.getSession(sessionID) << std::endl;
+	_session.setSession(sessionID, av);
 	return (0);
 }

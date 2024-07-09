@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/10 15:26:09 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/01 20:00:12 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,52 +82,40 @@ bool	TCPServer::initSocket()
 	return (false);
 }
 
-// __ Set Non Blocking _________________________________________________________
-// =============================================================================
-bool setNonBlocking(int sockfd) {
-    int flags = fcntl(sockfd, F_GETFL, 0);
-    if (flags == -1) {
-        // Failed to get socket flags
-        return false;
-    }
-
-    // Set the socket to non-blocking mode
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        // Failed to set socket to non-blocking mode
-        return false;
-    }
-
-    return true;
-}
-
 // __ Accept Connection ________________________________________________________
 // =============================================================================
 bool TCPServer::acceptConnection(int serverSD, fd_set *FDSRead)
 {
 	(void) FDSRead;
 	struct sockaddr_in conClientAdd;
-	int conSocket;
+	int fdClient;
 	socklen_t clientAddLength = sizeof(conClientAdd);
 
 	memset(&conClientAdd, 0, sizeof(conClientAdd));
-	conSocket = accept(serverSD, (struct sockaddr*)&conClientAdd, &clientAddLength);
-	if (conSocket < 0)
+	fdClient = accept(serverSD, (struct sockaddr*)&conClientAdd, &clientAddLength);
+	if (fdClient < 0)
 		return (false);
-	if (!setNonBlocking(conSocket))
+	if (!TCPUtils::setNonBlocking(fdClient))
 	{
-		close(conSocket);
+		close(fdClient);
 		return (false);
 	}
-	FD_SET(conSocket, &FDs);
-	if (fdMax < conSocket)
-		fdMax = conSocket;
-	clients[conSocket] = Client();
-	//isChunked[conSocket] = 0;
-	// timeval timeStart;
-	// gettimeofday(&timeStart, NULL);	
-	// timeKeepAlive[conSocket] = timeStart;
-	clients[conSocket].lastActivity = time(NULL);
-	std::cout << "client with id : " << conSocket << " is connected" << std::endl;
+	struct timeval tv;
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+	if (setsockopt(fdClient, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv)) < 0) {
+        std::cerr << "Error setting timeout\n";
+        exit(1);
+    }
+    if (setsockopt(fdClient, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(tv)) < 0) {
+        std::cerr << "Error setting timeout\n";
+        exit(1);
+    }
+	FD_SET(fdClient, &FDs);
+	if (fdMax < fdClient)
+		fdMax = fdClient;
+	clients[fdClient] = Client();
+	std::cout << "client with id : " << fdClient << " is connected" << std::endl;
 	return (true);
 }
 
@@ -177,40 +165,36 @@ void	TCPServer::runServer()
 	while (1)
 	{
 		FDSRead = FDs;
-	//	FDSWrite = FDs;
 		fdNum = select(fdMax + 1, &FDSRead, &FDSWrite, 0, 0);
 		if (fdNum >= 0)
 		{
 			for(i = 0; i < (fdMax + 1); i++)
 			{
+				if (clients[i].isKeepAlive && !handleTimeOut(i, &FDSRead, &FDSWrite))
+					continue;
 				if (FD_ISSET(i, &FDSRead) && (j = existSocket(i)))
 				{
 					if (!acceptConnection(j, &FDSRead))
 						continue;
 				}
-				else if (FD_ISSET(i, &FDSRead))
+				else
 				{
-					readRoutine(i, &FDSRead, &FDSWrite);
-					if (clients[i].getReadNum() == 0)
+					
+					if (FD_ISSET(i, &FDSRead))
 					{
-						std::cout << clients[i].body << std::endl;
-						clients[i].getHTTPParser()->setBody(clients[i].getRequest());
-						clients[i].getHTTPParser()->setConfig(getConfigClient(i));
+						readRoutine(i, &FDSRead, &FDSWrite);
+						if (clients[i].getReadNum() == 0)
+						{
+							initClient(i);
+							std::cout << clients[i].body << std::endl;
+							clients[i].getHTTPParser()->setBody(clients[i].getRequest());
+							clients[i].getHTTPParser()->setConfig(getConfigClient(i));
+						}
 					}
-					if (!clients[i].handleTimeOut(i))
+					else if (FD_ISSET(i, &FDSWrite) && i != existSocket(i))
 					{
-						close(i);
-						clients.erase(clients.find(i));
-					}
-				}
-				else if (FD_ISSET(i, &FDSWrite) && i != existSocket(i))
-				{
-					if (clients[i].getReadNum() == 0)
-						sendRoutine(i, &FDSWrite, &FDSRead);
-					if (!clients[i].handleTimeOut(i))
-					{
-						close(i);
-						clients.erase(clients.find(i));
+						if (clients[i].getReadNum() == 0)
+							sendRoutine(i, &FDSWrite, &FDSRead);
 					}
 				}
 			}
@@ -218,6 +202,15 @@ void	TCPServer::runServer()
 	}
 	for (i = 0; i < static_cast<int>(serverSockets.size()); i++)
 		close(serverSockets[i]);
+}
+
+// __ Init Client ______________________________________________________________
+// =============================================================================
+void	TCPServer::initClient(int sock)
+{
+	clients[sock].setIsChunked(0);
+	clients[sock].isHeader = false;
+	clients[sock].isBody = false;
 }
 
 // __ Read Routine _____________________________________________________________
@@ -277,6 +270,15 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	}	
 }
 
+// __ End Read _________________________________________________________________
+// =============================================================================
+// void	TCPServer::endRead(int sock, fd_set *FDSRead, fd_set *FDSWrite)
+// {
+// 	(void) FDSRead;
+// 	(void) FDSWrite;
+	
+// }
+
 // __ Send Routine _____________________________________________________________
 // =============================================================================
 void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
@@ -315,6 +317,7 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	size_t size = str.size();
 	if (size > BUFFER_SIZE)
 		size = BUFFER_SIZE;
+	clients[sock].lastActivity = time(NULL);
 	if ((bytesSend = send(sock, str.c_str(), size + 1, 0)) < 0)
 	{
 		std::cout << std::strerror(errno) << std::endl;
@@ -326,24 +329,45 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	   	clients[sock].setSendNum(clients[sock].getSendNum() + bytesSend);
 	else
 	   	clients[sock].setSendNum(bytesSend);
-	clients[sock].lastActivity = time(NULL);
 	if (bytesSend == 0 || bytesSend < BUFFER_SIZE)
 	{
 		clients[sock].setSendNum(0);
 		FD_CLR(sock, FDSWrite);
-		FD_SET(sock, &FDs);
-		//close(sock);
-		//delete clients[sock].getHTTPParser();
-		/*if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_OFF)
-		{
-			clients.erase(sock);
-			close(sock);
-		}
-		else
-			FD_SET(sock, &FDs);*/
+		delete clients[sock].getHTTPParser();
+		close(sock);
+		// //FD_SET(sock, &FDs);
+		// if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_OFF)
+		// {
+		// 	delete clients[sock].getHTTPParser();
+		// 	clients.erase(sock);
+		// 	close(sock);
+		// 	return ;
+		// }
+		// if (clients[sock].getHTTPParser())
+		// 	delete clients[sock].getHTTPParser();
+		// FD_SET(sock, &FDs);
+		// clients[sock].isKeepAlive = true;
 	}
 	/*struct timeval timeout;
     timeout.tv_sec = 5;
     timeout.tv_usec = 0;
     setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));*/
+}
+
+bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
+{
+	(void)FDSRead;
+	//(void)FDSWrite;
+	if (time(NULL) - clients[sock].lastActivity > 10)
+	{
+		std::cout << "client with id : " << sock << " is disconnected" << std::endl;
+		if (FD_ISSET(sock, &FDs))
+			FD_CLR(sock, &FDs);
+		if (FD_ISSET(sock, FDSWrite))
+			FD_CLR(sock, FDSWrite);
+		clients.erase(sock);
+		close(sock);
+		return (false);
+	}
+	return (true);
 }

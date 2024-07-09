@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 11:20:35 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/10 12:39:06 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/01 19:17:17 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@ Client::Client()
     sendNum = 0;
     isHeader = false;
     isBody = false;
+    isKeepAlive = false;
+    lastActivity = time(NULL);
+    httpParser = NULL;
 }
 
 Client::~Client()
@@ -87,6 +90,7 @@ void Client::setHTTPParser(HTTPParser *httpParser)
 
 bool Client::handleTimeOut(int sock)
 {
+    (void)sock;
 	size_t currTime = time(NULL);
 
 	if (currTime - lastActivity > 10)

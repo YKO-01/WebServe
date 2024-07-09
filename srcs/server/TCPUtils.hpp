@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TCPUtils.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 08:13:08 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/09 10:17:06 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/06/27 22:11:19 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <cstring>
 #include <sstream>
 #include <vector>
+#include <fcntl.h>
 
 namespace TCPUtils
 {
@@ -25,6 +26,7 @@ namespace TCPUtils
 	int hexCharToInt(char c);
 	size_t hexToDecimal(const std::string& hex);
 	std::string parseChunkedBody(std::string chunk);
+	bool setNonBlocking(int sockfd);
 };
 
 #endif

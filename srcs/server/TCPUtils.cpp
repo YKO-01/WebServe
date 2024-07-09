@@ -6,11 +6,29 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 08:16:52 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/10 14:54:32 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/06/27 22:10:02 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TCPUtils.hpp"
+
+// __ Set Non Blocking _________________________________________________________
+// =============================================================================
+bool TCPUtils::setNonBlocking(int sockfd) {
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        // Failed to get socket flags
+        return false;
+    }
+
+    // Set the socket to non-blocking mode
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        // Failed to set socket to non-blocking mode
+        return false;
+    }
+
+    return true;
+}
 
 std::vector<char>	TCPUtils::storeDataInVec(char *buffer)
 {
