@@ -91,15 +91,14 @@ void CGI::exec_cpp(const std::string &path, char **env)
         }
     }
 }
-std::string CGI::exec_cgi()
+bool CGI::exec_cgi()
 {
     std::string output;
     std::string path = _env["PATH_INFO"] + _env["SCRIPT_NAME"];
 
     std::cout << "path::" << path << std::endl;
     int pipefd[2];
-    // int pip_post[2];
-    if (pipe(pipefd) == -1  /* || pipe(pip_post) == -1*/)
+    if (pipe(pipefd) == -1)
     {
         std::cerr << "Failed to create pipe." << std::endl;
         return "";
@@ -116,17 +115,13 @@ std::string CGI::exec_cgi()
     else if (pid == 0)
     {
         close(pipefd[0]);
-        // close(pip_post[1]);
-        if (dup2(pipefd[1], STDOUT_FILENO) == -1 /*|| dup2(pip_post[0], STDIN_FILENO) == -1*/)
+        if (dup2(pipefd[1], STDOUT_FILENO) == -1)
         {
             std::cerr << "Failed to redirect STDOUT." << std::endl;
             close(pipefd[1]);
-            // close(pip_post[0]);
             exit(EXIT_FAILURE);
         }
         close(pipefd[1]);
-        // close(pip_post[0]);
-
         std::string ext = check_extension_file(path);
         if (ext == "cpp")
         {
@@ -145,12 +140,6 @@ std::string CGI::exec_cgi()
     else
     {
         close(pipefd[1]);
-        // close(pip_post[0]);
-        // if(split_equal(env[2]) == "POST")
-        // {
-        //     write(pip_post[1], env, body.size());
-        //     close(pip_post[1]);
-        // }
         char buffer[1024];
         int bytesRead;
         while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0)
@@ -165,11 +154,12 @@ std::string CGI::exec_cgi()
         if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
         {
             std::cerr << "Error: failed to execute" << std::endl;
-            return "";
+            return false;
         }
     }
+    this->outpute = output; 
     std::cout << "output::" << output << std::endl;
-    return output;
+    return true;
 }
 int main(int ac, char **av)
 {
