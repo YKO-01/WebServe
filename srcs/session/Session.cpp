@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:36:44 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/09 19:07:24 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/09 19:59:16 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,12 @@ std::string Session::createSession()
 {
 	std::string sessionID = generateSessionID();
 	expirationTime = std::time(NULL);
-	std::string data = "expirationTime:" + Utils::toString(expirationTime) + "\n";
-	char *arg[] = {(char *)data.c_str(), NULL};
+	// std::string data = "expirationTime:" + Utils::toString(expirationTime) + "\n";
+	MapDataSession dataSession;
+	dataSession["sessionID"] = sessionID;
+	dataSession["expirationTime"] = Utils::toString(expirationTime);
 
-	setSession(sessionID, arg);
-	setCookies(sessionID);
+	setSession(sessionID , dataSession);
 	return (sessionID);
 }
 
@@ -124,15 +125,23 @@ MapDataSession	Session::getDataSession(const std::string& _sessionID)
 
 //__ Set Session Data __________________________________________________________
 //==============================================================================
-void	Session::setSession(const std::string& _sessionID, char **arg)
+void	Session::setSession(const std::string& _sessionID, MapDataSession dataSession)
 {
 	std::ofstream file;
 	file.open(_sessionID, std::ios_base::app);
-	for (int i = 1; arg[i]; i++)
+	MapDataSession::iterator it = dataSession.begin();
+	while (it != dataSession.end())
 	{
-		file << arg[i] << std::endl;
+		if (it->first == "sessionID")
+		{
+			it++;
+			continue;
+		}
+		file << it->first << ":" << it->second << std::endl;
+		it++;
 	}
 	file.close();
+	setCookies(dataSession);
 }
 // {
 // 	std::cout << "session id: " << _sessionID << std::endl;
@@ -152,7 +161,23 @@ void	Session::removeSession(const std::string& _sessionID)
 
 //__ Set Cookies _______________________________________________________________
 //==============================================================================
-void	Session::setCookies(const std::string& _sessionID)
+// void	Session::setCookies(const std::string& _sessionID)
+// {
+// 	std::time_t now = std::time(0);
+// 	std::tm *ltm = std::localtime(&now);
+// 	std::string expires = "expires=";
+// 	expires += std::to_string(ltm->tm_mday + 1);
+// 	expires += " ";
+// 	expires += std::to_string(ltm->tm_hour);
+// 	expires += ":";
+// 	expires += std::to_string(ltm->tm_min);
+// 	expires += ":";
+// 	expires += std::to_string(ltm->tm_sec);
+// 	expires += " GMT";
+// 	std::cout << "Set-Cookie: sessionID=" << _sessionID << "; path=/; expires=" << expires << std::endl;
+// }
+
+void	Session::setCookies(MapDataSession dataSession)
 {
 	std::time_t now = std::time(0);
 	std::tm *ltm = std::localtime(&now);
@@ -165,7 +190,18 @@ void	Session::setCookies(const std::string& _sessionID)
 	expires += ":";
 	expires += std::to_string(ltm->tm_sec);
 	expires += " GMT";
-	std::cout << "Set-Cookie: sessionID=" << _sessionID << "; path=/; expires=" << expires << std::endl;
+	MapDataSession::iterator it = dataSession.begin();
+	while (it != dataSession.end())
+	{
+		if (it->first == "expirationTime")
+		{
+			it++;
+			continue;
+		}
+		std::cout << "Set-Cookie: " << it->first << "=" << it->second << "; path=/; expires=" << expires << std::endl;
+		it++;
+	}
+	// std::cout << "Set-Cookie: sessionID=" << _sessionID << "; path=/; expires=" << expires << std::endl;
 }
 
 //__ Check First Arg Is Session ID _____________________________________________

@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 11:34:39 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/09 18:13:10 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/09 19:58:45 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Session
 		// MapSessions _sessions;
 		size_t expirationTime;
 		std::string generateSessionID();
-		void setCookies(const std::string& _sessionID);
+		void setCookies(MapDataSession dataSession);
 	//	std::string dirName;
 	public:
 		Session();
@@ -41,7 +41,7 @@ class Session
 		std::string	getPathSession(const std::string _sessionID);
 		bool validSession(const std::string _sessionID);
 		MapDataSession getDataSession(const std::string& _sessionID);
-		void	setSession(const std::string& _sessionID, char **arg);
+		void	setSession(const std::string& _sessionID, MapDataSession dataSession);
 		void	removeSession(const std::string& _sessionID);
 
 		MapDataSession parseArg(char **arg);

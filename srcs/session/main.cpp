@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:37:11 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/09 19:25:04 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/09 19:58:41 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,12 @@ int main(int ac, char **av, char **env)
 			std::cout << "session not valid" << std::endl;
 			return (1);
 		}
-		_session.setSession(sessionID, av);
+		_session.setSession(sessionID, dataSession);
 		return (0);
 	}
 	std::string sessionID = _session.createSession();
+	dataSession["sessionID"] = sessionID;
 	std::cout << sessionID << std::endl;
-	_session.setSession(sessionID, av);
+	_session.setSession(sessionID, dataSession);
 	return (0);
 }
