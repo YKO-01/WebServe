@@ -1,24 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ResponseUtility.hpp                                :+:      :+:    :+:   */
+/*   IHTTPResponse.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/02 18:35:06 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/05 21:12:54 by ael-mhar         ###   ########.fr       */
+/*   Created: 2024/05/20 09:21:57 by ael-mhar          #+#    #+#             */
+/*   Updated: 2024/06/05 21:22:10 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RESPONSEUTILITY_HPP
-# define RESPONSEUTILITY_HPP
+#ifndef IHTTPRESPONSE_HPP
+# define IHTTPRESPONSE_HPP
+
+# include <iostream>
+# include <vector>
 
 # include "../incs/http.h"
 
-namespace ResponseUtility
+class IHTTPResponse
 {
-	std::string	getTime(std::time_t time);
-	std::string	translateStatus(Status status);
+	public:
+		virtual	~IHTTPResponse() {}
+		virtual	std::string	generate(void) = 0;
+		virtual	void setStatus(const Status& code) = 0;
+		virtual Status getStatus(void) const = 0;
+		virtual	void	setBody(std::string body) = 0;
 };
 
 #endif
