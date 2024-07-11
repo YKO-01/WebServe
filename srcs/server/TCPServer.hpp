@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TCPServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 19:37:27 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/01 19:33:26 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/11 11:42:26 by khalid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include "../../incs/webserv.h"
 #include "../srcs/config/Config.hpp"
 #include "../srcs/request/HTTPParser.hpp"
+#include "../srcs/request/HTTPResponse.hpp"
 #include "TCPUtils.hpp"
 #include "Client.hpp"
 #include <cstring>

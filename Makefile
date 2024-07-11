@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+         #
+#    By: khalid <khalid@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/06 12:38:17 by ayakoubi          #+#    #+#              #
-#    Updated: 2024/06/27 21:20:37 by ayakoubi         ###   ########.fr        #
+#    Updated: 2024/07/11 11:29:51 by khalid           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ SESDIR		=	session
 SRCMAIN		=	main
 SRCSERV		:=	TCPServer TCPUtils Client
 SRCCNFG		:=	parsing utils geter_setter
-SRCREQ		:=	HTTPParser HTTPGet HTTPRequest HTTPResponse Utils
+SRCREQ		:=	HTTPParser HTTPResponse utils/Utils utils/ResponseUtility
 SRCSESS		:=	
 
 OBJMAIN		:=	$(addprefix $(OBJDIR)/, $(addsuffix .o, $(SRCMAIN)))
@@ -58,8 +58,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(OBJDIR)
 	@mkdir -p $(OBJDIR)/$(SRVDIR)
 	@mkdir -p $(OBJDIR)/$(CNFDIR)
-	@mkdir -p $(OBJDIR)/$(REQDIR)
+	@mkdir -p $(OBJDIR)/$(REQDIR)/utils
 	@mkdir -p $(OBJDIR)/$(SESDIR)
+	@mkdir -p $(OBJDIR)/$(SRVDIR)
 	@$(CPP) $(CPPFLAGS) -c $< -I $(INC) -o $@
 	@echo "$(GREEN) [OK] $(RESET) $(YELLOW) compile >>>> $< $(RESET)"
 

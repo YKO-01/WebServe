@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 07:43:16 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/01 19:36:18 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/11 11:40:01 by khalid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <ctime>
 #include "../request/HTTPParser.hpp"
-#include "../request/HTTPRequest.hpp"
+#include "../request/HTTPResponse.hpp"
 
 class Client
 {
@@ -34,6 +34,7 @@ class Client
 		size_t lastActivity;
 		size_t timeKeepAlive;
 		bool isKeepAlive;
+		HTTPResponse httpResponse;
 	public:
 		Client();
 		~Client();
@@ -44,7 +45,7 @@ class Client
 		void 	setRestBody(const std::string& restBody);
 		void	setIsChunked(const int& isChunked);
 		void	setHTTPParser(HTTPParser *httpParser);
-		void	setHTTPRequest(HTTPRequest *httpRequest);
+		// void	setHTTPRequest(HTTPRequest *httpRequest);
 
 		std::string	getRequest() const;
 		std::string	getRestBody() const;

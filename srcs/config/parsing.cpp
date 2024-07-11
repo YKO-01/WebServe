@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/06/27 21:33:32 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/11 11:28:21 by khalid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -473,7 +473,7 @@ void	Config::parssConfigs(char **av)
     bool inServerBlock = false;
     if (!MyReadFile.is_open())
         ft_exit("error No such file ");
-    int i = 0;
+    // int i = 0;
     while (getline (MyReadFile, myText)) 
     {
         if(myText.empty() || isAllWhitespace(myText) || trim(myText).at(0) == '#')
@@ -495,7 +495,7 @@ void	Config::parssConfigs(char **av)
                     ft_exit("error tabs or space or :");
         	vct.push_back(myText);
         }
-        i++;
+        // i++;
     }
     if (!vct.empty()) 
         big_vec.push_back(vct);

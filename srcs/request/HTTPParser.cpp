@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPParser.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/01 19:12:55 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/11 11:58:32 by khalid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,11 @@ Method	HTTPParser::parseMethod(Iterator& begin, const Iterator end)
 		return (DELETE);
 	else
 		throw HTTPMethodNotAllowed();
+}
+
+void	HTTPParser::setConfig(Config config)
+{
+	this->config = config;
 }
 
 Uri	HTTPParser::parseUri(Iterator& begin, const Iterator end)
@@ -300,26 +305,10 @@ String	HTTPParser::getHeader(String header)
 	return ("");
 }
 
-void	HTTPParser::setConfig(Config config)
-{
-//	std::cout << config->get_port << std::endl;
-	(void) config;
-}
-
-void	HTTPParser::setBody(const std::string& body)
-{
-	this->body = body;
-}
-
-String	HTTPParser::getBody(void)
-{
-	return (body);
-}
-
 http_keepalive_t	HTTPParser::getConnectionType(void)
 {
-	// if (!getHeader("connection").compare("close"))
-	// 	return (HTTP_KEEPALIVE_OFF);
+	if (!getHeader("connection").compare("close"))
+		return (HTTP_KEEPALIVE_OFF);
 	return (HTTP_KEEPALIVE_ON);
 }
 

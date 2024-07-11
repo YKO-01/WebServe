@@ -14,7 +14,6 @@
 # define IHTTPPARSER_HPP
 
 # include <map>
-# include <cstdint>
 # include <iostream>
 
 # include "../../incs/http.h"

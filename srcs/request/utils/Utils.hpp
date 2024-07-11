@@ -6,14 +6,17 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 09:28:38 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/05/24 18:00:52 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/06/08 14:15:48 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
+#include <map>
 #include <vector>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <algorithm>
 
@@ -30,6 +33,7 @@ namespace Utils
 	std::pair<Iterator, String>     parseToken(const Iterator begin, const Iterator end, String token, bool _override = true);
 	Iterator ltrimString(const Iterator begin, const Iterator end, String charset = " ");
 	Iterator rtrimString(const Iterator begin, const Iterator end, String charset = " ");
+	String  readFile(String resource);
 	bool    isValidUriCharacters(String uri);
 	bool    isValidMethod(String method);
 	bool    isValidUriScheme(String scheme);
@@ -41,6 +45,8 @@ namespace Utils
 	bool	isnotprint(char c);
 	bool    isDirectory(String path);
 	bool	matchPathToRoute(String path, String route);
+	String	identifyContentType(std::string filename);
+	bool	hasCgiExtension(const std::string& file);
 };
 
 #endif

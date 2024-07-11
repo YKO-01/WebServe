@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPParser.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 11:42:35 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/10 15:12:02 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/11 11:21:01 by khalid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define HTTPPARSER_HPP
 
 # include "IHTTPParser.hpp"
-# include "config/Config.hpp"
-# include "../utils/Utils.hpp"
+# include "../config/Config.hpp"
+# include "utils/Utils.hpp"
 
 class HTTPParser : public IHTTPParser
 {
@@ -29,8 +29,6 @@ class HTTPParser : public IHTTPParser
 		Status	status;
 
 		http_encoding_t	encoding;
-
-		std::string body;
 
 	public:
 		HTTPParser(std::string request);
@@ -50,8 +48,6 @@ class HTTPParser : public IHTTPParser
 		Config	getConfig(void) const;
 		void	destroyParsedData(void);
 		void	setConfig(Config config);
-		void	setBody(const std::string& body);
-		String	getBody(void);
 		String	getHeader(String header);
 		http_encoding_t		getEncodingType(void);
 		http_keepalive_t	getConnectionType(void);

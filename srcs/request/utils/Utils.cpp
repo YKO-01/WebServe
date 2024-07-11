@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 08:12:16 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/05/25 10:05:02 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/11 11:31:15 by khalid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,10 @@ Iterator Utils::ltrimString(const Iterator begin, const Iterator end, String cha
 	while (it != end)
 	{
 		i = -1;
-		while (++i != charset.length())
-			if (*it != charset[i])
-				return (it);
+		while (++i != charset.length() && *it != charset[i])
+			;
+		if (i == charset.length())
+			return (it);
 		it++;
 	}
 	return (it);
@@ -68,12 +69,23 @@ Iterator Utils::rtrimString(const Iterator begin, const Iterator end, String cha
 	while (it != begin)
 	{
 		i = -1;
-		while (++i != charset.length())
-			if (*it != charset[i])
-				return (it);
+		while (++i != charset.length() && *it != charset[i])
+			;
+		if (i == charset.length())
+			return (it + 1);
 		it--;
 	}
 	return (it);
+}
+
+String  Utils::readFile(String resource)
+{
+	std::ifstream file(resource);
+	if (!file.is_open())
+		return ("");
+	std::stringstream       buffer;
+	buffer << file.rdbuf();
+   	return (buffer.str());
 }
 
 bool	Utils::isValidUriCharacters(String uri)
@@ -116,7 +128,7 @@ bool	Utils::isValidUriPort(String port)
 {
 	if (port.find_first_not_of("0123456789") != String::npos || port.length() > 6)
 		return (false);
-	if (std::atoi(port.c_str()) > 30000)
+	if (std::atoi(port.c_str()) > 65535)
 		return (false);
 	return (true);
 }
@@ -166,12 +178,51 @@ bool    Utils::isDirectory(String path)
 
 bool	Utils::matchPathToRoute(String path, String route)
 {
-	route.erase(std::remove(route.begin(), route.end(), '\"'), route.end());
 	if (!path.compare(0, route.length(), route))
 	{
-		if (path.length() != route.length() && path[route.length()] != '/')
+		if (path.length() > route.length() && path[route.length()] != '/' && route != "/")
 			return (false);
 		return (true);
+	}
+	return (false);
+}
+
+String	Utils::identifyContentType(std::string filename)
+{
+	std::map<std::string, std::string> mime_types;
+
+	std::ifstream file("/Users/ael-mhar/Desktop/webserv/main/srcs/utils/mime.txt");
+
+	if (!file.is_open())
+		return ("");
+    std::string line;
+    while (std::getline(file, line))
+    {
+        std::string key = line.substr(0, line.find(" "));
+        std::string value = line.substr(line.find("|") + 1);
+        mime_types[key] = String(ltrimString(value.begin(), value.end()), value.end()); 
+    }
+	file.close();
+    std::string extension = filename.substr(filename.find_last_of(".") + 1);
+    if (mime_types.find(extension) != mime_types.end())
+		return mime_types[extension];
+	return ("application/octet-stream");
+}
+
+bool	Utils::hasCgiExtension(const String& file)
+{
+	std::string extension;
+	std::string formats[] = {"php", "sh", "cpp", "py"};
+
+	size_t	pos = file.find_last_of(".");
+	if (pos != std::string::npos)
+	{
+		extension = file.substr(pos + 1);
+		for (size_t i = 0; i < formats->size() ; i++)
+        {
+            if (extension == formats[i])
+                return (true);
+        }
 	}
 	return (false);
 }
