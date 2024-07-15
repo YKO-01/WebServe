@@ -69,7 +69,7 @@ void CGI::exec_cpp(const std::string &path, char **env)
     pid_t pid = fork();
     if (pid == -1)
     {
-        std::cerr << "Failed to fork." << std::endl;
+        // std::cerr << "Failed to fork." << std::endl;
         return;
     }
     else if (pid == 0)
@@ -77,7 +77,7 @@ void CGI::exec_cpp(const std::string &path, char **env)
         const char* path_cpp = "/usr/bin/c++";
         const char* args[] = { "c++", path.c_str(), "-o", "a.out", NULL };
         execve(path_cpp, (char* const*)args, env);
-        perror("execve");
+        // perror("execve");
         exit(EXIT_FAILURE);
     }
     else
@@ -86,7 +86,7 @@ void CGI::exec_cpp(const std::string &path, char **env)
         waitpid(pid, &status, 0);
         if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
         {
-            std::cerr << "Error: failed to compile" << std::endl;
+            // std::cerr << "Error: failed to compile" << std::endl;
             exit(EXIT_FAILURE);
         }
     }
@@ -96,28 +96,24 @@ bool CGI::exec_cgi()
     std::string output;
     std::string path = _env["PATH_INFO"] + _env["SCRIPT_NAME"];
 
-    std::cout << "path::" << path << std::endl;
     int pipefd[2];
     if (pipe(pipefd) == -1)
     {
-        std::cerr << "Failed to create pipe." << std::endl;
-        return "";
+        return false;
     }
     char **env = set_env();
     pid_t pid = fork();
     if (pid == -1)
     {
-        std::cerr << "Failed to fork." << std::endl;
         close(pipefd[0]);
         close(pipefd[1]);
-        return "";
+        return false;
     }
     else if (pid == 0)
     {
         close(pipefd[0]);
         if (dup2(pipefd[1], STDOUT_FILENO) == -1)
         {
-            std::cerr << "Failed to redirect STDOUT." << std::endl;
             close(pipefd[1]);
             exit(EXIT_FAILURE);
         }
@@ -153,7 +149,6 @@ bool CGI::exec_cgi()
         waitpid(pid, &status, 0);
         if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
         {
-            std::cerr << "Error: failed to execute" << std::endl;
             return false;
         }
     }
@@ -167,7 +162,4 @@ int main(int ac, char **av)
     CGI cgi(env);
     // cgi.set_env();
     cgi.exec_cgi();
-    // std::string out = exec_cgi();
-    // std::cout << "outp:::" << out << std::endl;
-    // return 0;
 }
