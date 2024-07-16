@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:04 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/11 11:22:43 by khalid           ###   ########.fr       */
+/*   Updated: 2024/07/16 09:04:36 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 class HTTPResponse : public IHTTPResponse
 {
 	private:
-		//Version	version;
 		std::string	body;
 		std::string	response;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TCPServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/11 11:57:32 by khalid           ###   ########.fr       */
+/*   Updated: 2024/07/16 10:00:50 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,9 +188,9 @@ void	TCPServer::runServer()
 							initClient(i);
 							std::cout << clients[i].body << std::endl;
 							clients[i].getHTTPParser()->setConfig(getConfigClient(i));
-							clients[i].httpResponse.setBody(clients[i].body);
-							// clients[i].getHTTPParser()->setBody(clients[i].getRequest());
-							// clients[i].getHTTPParser()->setConfig(getConfigClient(i));
+							clients[i].getHTTPParser()->setBody(clients[i].getRequest());
+							clients[i].httpRequest = new HTTPRequest(clients[i].getHTTPParser());
+							clients[i].httpRequest->processRequest();
 						}
 					}
 					else if (FD_ISSET(i, &FDSWrite) && i != existSocket(i))
@@ -286,34 +286,9 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 {
 	(void) FDSRead;
-   	// std::string html_body;
-    // html_body += "<html>\n";
-    // html_body += "<body>\n";
-    // html_body += "<h2>Simple Form Example</h2>\n";
-    // html_body += "<form action=\"/submit\" method=\"post\">\n";
-    // html_body += "  <label for=\"name\">Name:</label><br>\n";
-    // html_body += "  <input type=\"text\" id=\"name\" name=\"name\"><br>\n";
-    // html_body += "  <label for=\"email\">Email:</label><br>\n";
-    // html_body += "  <input type=\"text\" id=\"email\" name=\"email\"><br><br>\n";
-    // html_body += "  <input type=\"submit\" value=\"Submit\">\n";
-	// html_body += "<input type=\"file\" id=\"avatar\" name=\"avatar\" accept=\"image/png, image/jpeg\" />\n";
-	// html_body += "</form>\n";
-    // html_body += "</body>\n";
-    // html_body += "</html>\n";
-
-	// size_t content_length = html_body.size();
-
   	std::ostringstream response;
-    // response << "HTTP/1.1 200 OK\r\n";
-    // response << "Set-Cookie: name=ahmed\r\n";
-    // response << "Content-Type: text/html\r\n";
-    // response << "Content-Length: " << content_length << "\r\n";
-    // response << "\r\n";
-	// response << html_body;
-	response << clients[sock].httpResponse.generate();
-
+	response << clients[sock].httpRequest->getResponse();
 	std::string str = response.str();
-	std::cout << str << std::endl;
 	int bytesSend = 0;
 	
 	if (clients[sock].getSendNum() && clients[sock].getSendNum() < str.size())

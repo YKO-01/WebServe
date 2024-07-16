@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtility.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 18:35:06 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/11 11:18:07 by khalid           ###   ########.fr       */
+/*   Updated: 2024/07/16 09:27:26 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESPONSEUTILITY_HPP
 # define RESPONSEUTILITY_HPP
 
-# include "http.h"
+# include "../../../incs/http.h"
 
 namespace ResponseUtility
 {

@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 11:20:35 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/01 19:17:17 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/16 10:04:14 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 Client::Client()
 {
     isChunked = 0;
-    readNum = 0;
+    readNum = -1;
     sendNum = 0;
     isHeader = false;
     isBody = false;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 08:12:16 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/11 11:31:15 by khalid           ###   ########.fr       */
+/*   Updated: 2024/06/08 14:14:46 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ std::pair<Iterator, String>	Utils::parseToken(const Iterator begin, const Iterat
 Iterator Utils::ltrimString(const Iterator begin, const Iterator end, String charset)
 {
 	Iterator it;
-	size_t	i;
+	std::size_t i;
 
 	it = begin;
 	while (it != end)
@@ -63,7 +63,7 @@ Iterator Utils::ltrimString(const Iterator begin, const Iterator end, String cha
 Iterator Utils::rtrimString(const Iterator begin, const Iterator end, String charset)
 {
 	Iterator it;
-	size_t	i;
+	std::size_t i;
 
 	it = end;
 	while (it != begin)
@@ -187,7 +187,7 @@ bool	Utils::matchPathToRoute(String path, String route)
 	return (false);
 }
 
-String	Utils::identifyContentType(std::string filename)
+String	Utils::identifyMimeType(std::string filename)
 {
 	std::map<std::string, std::string> mime_types;
 

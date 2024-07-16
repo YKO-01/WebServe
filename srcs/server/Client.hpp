@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 07:43:16 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/11 11:40:01 by khalid           ###   ########.fr       */
+/*   Updated: 2024/07/16 09:12:17 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <ctime>
 #include "../request/HTTPParser.hpp"
 #include "../request/HTTPResponse.hpp"
+#include "../request/HTTPRequest.hpp"
 
 class Client
 {
@@ -34,7 +35,7 @@ class Client
 		size_t lastActivity;
 		size_t timeKeepAlive;
 		bool isKeepAlive;
-		HTTPResponse httpResponse;
+		HTTPRequest *httpRequest;
 	public:
 		Client();
 		~Client();

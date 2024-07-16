@@ -45,7 +45,7 @@ namespace Utils
 	bool	isnotprint(char c);
 	bool    isDirectory(String path);
 	bool	matchPathToRoute(String path, String route);
-	String	identifyContentType(std::string filename);
+	String	identifyMimeType(std::string filename);
 	bool	hasCgiExtension(const std::string& file);
 };
 

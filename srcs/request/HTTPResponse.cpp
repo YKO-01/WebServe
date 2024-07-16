@@ -24,20 +24,19 @@ std::string&	HTTPResponse::operator[](const std::string& header)
 std::string	HTTPResponse::generate(void)
 {
 	std::map<std::string, std::string>::iterator it;
-	std::cout << "================================================================\n";
+
 	response = "HTTP/1.1 " + std::to_string(status) + " " + ResponseUtility::translateStatus(status) + "\r\n"; 
 	response += "Server: phantom/1.0.0\r\n";
 	response += "Date: " + ResponseUtility::getTime(std::time(NULL)) + "\r\n";
 	response += "Content-Length: " + std::to_string(body.length()) + "\r\n";
 	for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); it++)
-		response += it->first + " : " + it->second+ "\r\n";
+		response += it->first + ": " + it->second+ "\r\n";
 	if (status != HTTP_OK)
 		response += "Connection: close\r\n";
 	else
 		response += "Connection: keep-alive\r\n";
 	response += "\r\n";
 	response += body;
-
 	return (response);
 }
 

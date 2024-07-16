@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: khalid <khalid@student.42.fr>              +#+  +:+       +#+         #
+#    By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/06 12:38:17 by ayakoubi          #+#    #+#              #
-#    Updated: 2024/07/11 11:29:51 by khalid           ###   ########.fr        #
+#    Updated: 2024/07/16 09:32:35 by ayakoubi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,11 +22,13 @@ SRVDIR		=	server
 CNFDIR		=	config
 REQDIR		=	request
 SESDIR		=	session
+CGIDIR		=	CGI
 
 SRCMAIN		=	main
 SRCSERV		:=	TCPServer TCPUtils Client
 SRCCNFG		:=	parsing utils geter_setter
-SRCREQ		:=	HTTPParser HTTPResponse utils/Utils utils/ResponseUtility
+SRCREQ		:=	HTTPParser HTTPRequest HTTPResponse HTTPDelete HTTPGet HTTPPost utils/Utils utils/ResponseUtility
+SRCCGI		:=	Cgi
 SRCSESS		:=	
 
 OBJMAIN		:=	$(addprefix $(OBJDIR)/, $(addsuffix .o, $(SRCMAIN)))
@@ -39,6 +41,8 @@ OBJREQ		:=	$(addprefix $(OBJDIR)/$(REQDIR)/, $(addsuffix .o, $(SRCREQ)))
 SRCREQ		:=	$(addprefix $(SRCDIR)/$(REQDIR)/, $(addsuffix .cpp, $(SRCREQ)))
 OBJSESS		:=	$(addprefix $(SRCDIR)/$(SESDIR)/, $(addsuffix .o, $(SRCSESS)))
 SRCSESS		:=	$(addprefix $(SRCDIR)/$(SESDIR)/, $(addsuffix .cpp, $(SRCSESS)))
+OBJCGI		:=	$(addprefix $(OBJDIR)/$(CGIDIR)/, $(addsuffix .o, $(SRCCGI)))
+SRCCGI		:=	$(addprefix $(SRCDIR)/$(CGIDIR)/, $(addsuffix .cpp, $(SRCCGI)))
 
 # OBJSERV	:=	$(addprefix $(OBJDIR)/, $(patsubst %.cpp,%.o,$(SRCSERV)))
 
@@ -61,12 +65,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(OBJDIR)/$(REQDIR)/utils
 	@mkdir -p $(OBJDIR)/$(SESDIR)
 	@mkdir -p $(OBJDIR)/$(SRVDIR)
+	@mkdir -p $(OBJDIR)/$(CGIDIR)
 	@$(CPP) $(CPPFLAGS) -c $< -I $(INC) -o $@
 	@echo "$(GREEN) [OK] $(RESET) $(YELLOW) compile >>>> $< $(RESET)"
 
 all:	$(NAME)
 
-$(NAME) :	$(OBJSERV) $(OBJMAIN) $(OBJCNFG) $(OBJREQ) $(OBJSESS)
+$(NAME) :	$(OBJSERV) $(OBJMAIN) $(OBJCNFG) $(OBJREQ) $(OBJSESS) $(OBJCGI)
 	@$(CPP) $(CPPFLAGS) $^ -I $(INC) -o $(NAME)
 	@@echo "$(GREEN) ------ Built success ------ $(RESET)"
 

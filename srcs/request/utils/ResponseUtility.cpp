@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtility.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 18:37:32 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/11 11:33:49 by khalid           ###   ########.fr       */
+/*   Updated: 2024/06/05 21:11:46 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,9 @@ std::string	ResponseUtility::translateStatus(Status status)
 		case HTTP_NOT_MODIFIED:
 			reason = "Not Modified";
 			break ;
-		// case HTTP_TEMPORARY_REDIRECT:
-		// 	reason = "Temporary Redirect";
-		// 	break ;
+		case HTTP_TEMPORARY_REDIRECT:
+			reason = "Temporary Redirect";
+			break ;
 		case HTTP_BAD_REQUEST:
 			reason = "Bad Request";
 			break ;
