@@ -45,7 +45,7 @@ std::pair<Iterator, String>	Utils::parseToken(const Iterator begin, const Iterat
 Iterator Utils::ltrimString(const Iterator begin, const Iterator end, String charset)
 {
 	Iterator it;
-	int	i;
+	std::size_t i;
 
 	it = begin;
 	while (it != end)
@@ -63,7 +63,7 @@ Iterator Utils::ltrimString(const Iterator begin, const Iterator end, String cha
 Iterator Utils::rtrimString(const Iterator begin, const Iterator end, String charset)
 {
 	Iterator it;
-	int	i;
+	std::size_t i;
 
 	it = end;
 	while (it != begin)
@@ -187,7 +187,7 @@ bool	Utils::matchPathToRoute(String path, String route)
 	return (false);
 }
 
-String	Utils::identifyContentType(std::string filename)
+String	Utils::identifyMimeType(std::string filename)
 {
 	std::map<std::string, std::string> mime_types;
 
