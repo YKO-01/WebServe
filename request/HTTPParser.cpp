@@ -6,31 +6,38 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/04 13:13:44 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/06/08 16:16:56 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPParser.hpp"
 
-HTTPParser::HTTPParser(std::string request)
+HTTPParser::HTTPParser(std::string request) : encoding(HTTP_ENCODE_LENGTH), connection(HTTP_KEEPALIVE_ON)
 {
 	Header header;
 	Iterator it;
 
 	it = Utils::findToken(request.begin(), request.end(), "\r\n", false);
 	status = parseStatusLine(request.begin(), it);
-	if (status != HTTP_CONTINUE)
-		return ;
-	status = parseHeaders(it, request.end());
+	if (status == HTTP_CONTINUE)
+		status = parseHeaders(it, request.end());
+}
+
+String HTTPParser::operator[](const String& header)
+{
+	Map::iterator it;
+
+	it = headers.find(header);
+	if (it != headers.end())
+		return (it->second);
+	return "";
 }
 
 Status	HTTPParser::parseHeaders(Iterator& begin, const Iterator end)
 {
 	Iterator it;
 	Header header;
-	Status status;
 
-	status = HTTP_CONTINUE;
 	while (begin != end)
 	{
 		it = begin + 2;
@@ -41,15 +48,33 @@ Status	HTTPParser::parseHeaders(Iterator& begin, const Iterator end)
 			break ;
 		header = parseHeaderField(it, begin);
 		if (header.first.empty())
-		{
-			status = HTTP_BAD_REQUEST;
-			break ;
-		}
+			return (HTTP_BAD_REQUEST);
 		headers[header.first] = header.second;
 	}
-	if (getHeader("host").empty())
-		status = HTTP_BAD_REQUEST;
-	return (status);
+	if ((*this)["host"].empty())
+		return (HTTP_BAD_REQUEST);
+	if (headers.find("transfer-encoding") != headers.end())
+	{
+		if (headers.find("content-length") != headers.end())
+			return (HTTP_BAD_REQUEST);
+		if ((*this)["transfer-encoding"] != "chunked")
+			return (HTTP_NOT_IMPLEMENTED);
+		else
+			encoding = HTTP_ENCODE_CHUNKED;
+	}
+	else
+	{
+		if ((*this)["content-length"].find_first_not_of("0123456789") != String::npos)
+			return (HTTP_BAD_REQUEST);
+		encoding = HTTP_ENCODE_LENGTH;
+	}
+	if (!(*this)["connection"].compare("close"))
+		connection = HTTP_KEEPALIVE_OFF;
+	else
+		connection = HTTP_KEEPALIVE_ON;
+	if (body.length() > config.get_client_body_size())
+		return (HTTP_REQUEST_TOO_LARGE);
+	return (HTTP_CONTINUE);
 }
 
 Status	HTTPParser::parseStatusLine(const Iterator begin, const Iterator end)
@@ -120,11 +145,11 @@ Uri	HTTPParser::parseUri(Iterator& begin, const Iterator end)
 		{
 			authority = temp.second;
 			begin = temp.first;
-			temp = Utils::parseToken(authority.begin(), authority.end(), ":");
+			temp = Utils::parseToken(authority.begin(), authority.end(), ":", false);
 			if (temp.first != authority.end())
 			{
 				uri.host = temp.second;
-				uri.port = String(temp.first, authority.end());
+				uri.port = String(temp.first + 1, authority.end());
 			}
 			else
 				uri.host = authority;
@@ -210,7 +235,7 @@ Version	HTTPParser::parseVersion(Iterator& begin, const Iterator end)
 		throw HTTPBadVersion();
 	version.major = std::atoi(major.c_str());
 	version.minor = std::atoi(minor.c_str());
-	if (version.major != 1 && version.minor != 1)
+	if (version.major != 1 || version.minor != 1)
 		throw HTTPVersionNotSupported();
 	return (version);
 }
@@ -230,12 +255,8 @@ Header	HTTPParser::parseHeaderField(const Iterator begin, const Iterator end)
 String	HTTPParser::parseHeaderFieldName(const Iterator begin, const Iterator end)
 {
 	String	name;
-	Iterator it;
-	Iterator ite;
 
-	it = Utils::ltrimString(begin, end, " \t");
-	ite = Utils::rtrimString(begin, end, " \t");
-	name = String(it, ite);
+	name = String(begin, end);
 	if (!Utils::isValidHeader(name))
 		name.clear();
 	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
@@ -249,7 +270,7 @@ String	HTTPParser::parseHeaderFieldValue(const Iterator begin, const Iterator en
 	Iterator ite;
 
 	it = Utils::ltrimString(begin, end, " \t");
-	ite = Utils::rtrimString(begin, end, " \t");
+	ite = Utils::rtrimString(begin, end, " \t\r");
 	value = String(it, ite);
 	return (value);
 }
@@ -290,21 +311,29 @@ Status	HTTPParser::getStatus(void) const
 	return (status);
 }
 
-String	HTTPParser::getHeader(String header)
+void	HTTPParser::setConfig(Config config)
 {
-	Map::iterator	it;
+	this->config = config;
+}
 
-	it = headers.find(header);
-	if (it != headers.end())
-		return (it->second);
-	return ("");
+Config	HTTPParser::getConfig() const
+{
+	return (config);
+}
+
+void	HTTPParser::setBody(const String& body)
+{
+	this->body = body;
+}
+
+String	HTTPParser::getBody(void) const
+{
+	return (body);
 }
 
 http_keepalive_t	HTTPParser::getConnectionType(void)
 {
-	if (!getHeader("connection").compare("close"))
-		return (HTTP_KEEPALIVE_OFF);
-	return (HTTP_KEEPALIVE_ON);
+	return (connection);
 }
 
 http_encoding_t	HTTPParser::getEncodingType(void)

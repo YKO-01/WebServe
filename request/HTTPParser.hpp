@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 11:42:35 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/04 12:20:56 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/06/08 09:53:00 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,14 @@ class HTTPParser : public IHTTPParser
 		Map	headers;
 		Status	status;
 
+		String body;
+
 		http_encoding_t	encoding;
+		http_keepalive_t connection;
 
 	public:
 		HTTPParser(std::string request);
+		String	operator[](const String& header);
 		virtual Status	parseStatusLine(const Iterator begin, const Iterator end);
 		virtual	Method parseMethod(Iterator& begin, const Iterator end);
 		virtual Uri parseUri(Iterator& begin, const Iterator end);
@@ -46,9 +50,10 @@ class HTTPParser : public IHTTPParser
 		Method	getMethod(void) const;
 		Version	getVersion(void) const;
 		Config	getConfig(void) const;
+		String	getBody(void) const;
 		void	destroyParsedData(void);
 		void	setConfig(Config config);
-		String	getHeader(String header);
+		void	setBody(const String& body);
 		http_encoding_t		getEncodingType(void);
 		http_keepalive_t	getConnectionType(void);
 		class HTTPBadMethod : public std::exception

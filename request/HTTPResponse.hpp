@@ -20,7 +20,6 @@
 class HTTPResponse : public IHTTPResponse
 {
 	private:
-		Version	version;
 		std::string	body;
 		std::string	response;
 

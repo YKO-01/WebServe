@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IHTTPResponse.hpp                                  :+:      :+:    :+:   */
+/*   IHTTPRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/20 09:21:57 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/05 21:22:10 by ael-mhar         ###   ########.fr       */
+/*   Created: 2024/05/11 07:11:30 by ael-mhar          #+#    #+#             */
+/*   Updated: 2024/05/29 21:01:08 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IHTTPRESPONSE_HPP
-# define IHTTPRESPONSE_HPP
-
-# include <iostream>
-# include <vector>
+#ifndef IHTTPREQUEST_HPP
+# define IHTTPREQUEST_HPP
 
 # include "../../incs/http.h"
 
-class IHTTPResponse
+# include <map>
+# include <vector>
+# include <iostream>
+
+typedef std::string	String;
+typedef	std::string::iterator Iterator;
+
+class IHTTPRequest
 {
 	public:
-		virtual	~IHTTPResponse() {}
-		virtual	std::string	generate(void) = 0;
-		virtual	void setStatus(const Status& code) = 0;
-		virtual Status getStatus(void) const = 0;
-		virtual	void	setBody(std::string body) = 0;
+		virtual ~IHTTPRequest() {}
+		virtual void processRequest() = 0;
 };
 
 #endif
