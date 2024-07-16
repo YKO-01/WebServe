@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 09:11:09 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/04 13:11:40 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/06/08 09:56:20 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,7 @@ typedef enum
 typedef enum
 {
 	HTTP_ENCODE_LENGTH,  /* Data is sent with Content-Length */
-	HTTP_ENCODE_CHUNKED, /* Data is chunked */
-	HTTP_ENCODE_NOT_IMPLEMENTED
+	HTTP_ENCODE_CHUNKED  /* Data is chunked */
 }				http_encoding_t;
 
 /*
@@ -144,6 +143,7 @@ typedef enum
 		HTTP_SEE_OTHER,              /* See this other link... */
 		HTTP_NOT_MODIFIED,           /* File not modified */
 		HTTP_USE_PROXY,              /* Must use a proxy to access this URI */
+		HTTP_TEMPORARY_REDIRECT = 307,
 
 		HTTP_BAD_REQUEST = 400,      /* Bad request */
 		HTTP_UNAUTHORIZED,           /* Unauthorized to access host */
