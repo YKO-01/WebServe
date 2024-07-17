@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:10 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/05/28 14:45:21 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/16 11:00:15 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ class Route {
         // void set_cgi_bin(std::string cgi_bin);
         // void set_cgi_extension(std::string cgi_extension);
         void set_directory_listing(bool directory_listing);
+        //copy assigment 
+        // Route(const Route &route);
+        Route &operator=(const Route &route);
         
         //methods
         void clear_route();

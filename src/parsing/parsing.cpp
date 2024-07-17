@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/03 15:56:05 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/17 14:57:57 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,6 +319,7 @@ void router_pars(Config &sv,std::vector<std::string> infos)
             info = remove_quots(info);
             if(info[info.size() - 1] != '/')
                 info += "/";
+            // std::cout << "info::" << info << std::endl;
             route.set_directory(info);
         }
         else if(infos[i].find("redirect:") != std::string::npos)

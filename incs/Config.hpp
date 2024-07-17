@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:22 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/05/28 14:45:05 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/16 10:58:33 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ class Config {
         void set_error_pages(int error_code, std::string error_page);
         void set_client_body_size(size_t client_body_size);
         void set_routes(Route routes);
+
+        Config &operator=(const Config &Config);
         
         
         
