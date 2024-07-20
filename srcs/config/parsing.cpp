@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khalid <khalid@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/11 11:28:21 by khalid           ###   ########.fr       */
+/*   Updated: 2024/07/16 10:33:11 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void Config::display_server()
     std::cout << "client_body_size: " << client_body_size << std::endl;
 }
 
-
 Config::Config()//: port(-1), default_server(false),client_body_size(0)
 {
     this->port = 80;
@@ -36,6 +35,19 @@ Config::Config()//: port(-1), default_server(false),client_body_size(0)
     this->default_server = false;
     this->client_body_size = 1000000;
     this->root = "/var/www/html";
+}
+
+Config& Config::operator=(const Config &config)
+{
+    this->host = config.host;
+    this->root = config.root;
+    this->port = config.port;
+    this->server_names = config.server_names;
+    this->default_server = config.default_server;
+    this->error_pages = config.error_pages;
+    this->client_body_size = config.client_body_size;
+    this->routes = config.routes;
+    return *this;
 }
 
 void display(std::pair<std::string, std::vector<std::string> > pair)

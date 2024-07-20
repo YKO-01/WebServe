@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 19:37:27 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/11 20:31:24 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/16 11:31:55 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include "../srcs/request/HTTPParser.hpp"
 #include "../srcs/request/HTTPResponse.hpp"
 #include "../CGI/Cgi.hpp"
+#include "../request/utils/Utils.hpp"
 #include "TCPUtils.hpp"
 #include "Client.hpp"
 #include <cstring>

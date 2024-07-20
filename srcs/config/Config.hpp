@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:22 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/05/28 14:45:05 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/16 10:32:25 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class Config {
     public:
         
         Config();
-		
+		Config& operator=(const Config &config);
 
         //getters
         std::string get_host();
