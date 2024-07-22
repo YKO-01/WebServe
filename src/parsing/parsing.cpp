@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/21 14:12:00 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/22 09:21:28 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,6 +363,10 @@ void router_pars(Config &sv,std::vector<std::string> infos)
         else
             ft_exit("router::error not valid key");
     }
+    if(route.get_path().empty())
+        ft_exit("router:no path found");
+    if(route.get_directory().empty())
+        ft_exit("router:no directory found");
     sv.set_routes(route);
 }
 void check_info_exit(std::vector<Config> s)
@@ -499,7 +503,7 @@ void	Config::parssConfigs(char **av)
     vecOfvecOfPair server_router_info = split_router(big_vec);
     Config servers;
     all_info = insert_data_to_server(server_router_info, servers);
-    display_info(all_info);
+    // display_info(all_info);
 }
 
 int main(int argc, char const *argv[])
