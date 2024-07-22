@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/22 23:58:07 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/23 00:01:46 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ Config	TCPServer::getConfigClient(int sock)
 	{
 		if (host == TCPUtils::stringToLong(it->get_host()) && port == it->get_port())
 		{
-			return (*it);
+			// return (*it);
 	
 			size_t i = -1;
 			while (++i < it->get_server_names().size())
@@ -166,6 +166,7 @@ Config	TCPServer::getConfigClient(int sock)
 				if (hostname == it->get_server_names()[i] || hostname == "localhost")
 					return (*it);
 			}
+			return (*it);
 			// std::vector<std::string>::iterator it2 = it->get_server_names().begin();
 			// printVector(it->get_server_names());
 			// while (it->get_server_names().size() && it2 != it->get_server_names().end())
@@ -177,7 +178,7 @@ Config	TCPServer::getConfigClient(int sock)
 		}
 		it++;
 	}
-	return (configs[0]);
+	return (configs[1]);
 }
 
 // __ run server  ______________________________________________________________
