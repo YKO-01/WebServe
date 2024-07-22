@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 18:16:21 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/16 09:49:35 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/20 14:49:32 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ Status	HTTPGet::processFile(String resource)
 	{
 		CGI cgiExecuter(getCgiEnv()); 
 		if (!cgiExecuter.exec_cgi())
+		{
+			std::cout << "./\n";
 			return (HTTP_SERVER_ERROR);
+		}
 		result = cgiExecuter.getCgiOutput();
 		(*response)["Content-Type"] = "text/html";
 	}

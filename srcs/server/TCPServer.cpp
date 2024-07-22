@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/20 14:03:27 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/22 23:58:07 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ Config	TCPServer::getConfigClient(int sock)
 	int port = ntohs(localAddr.sin_port);
 	long host = ntohl(localAddr.sin_addr.s_addr);
 	String hostname = clients[sock].getHTTPParser()->getHeaders()["host"];
-	// String hostname = (*clients[sock].getHTTPParser())["host"];
+	// // String hostname = (*clients[sock].getHTTPParser())["host"];
 	hostname = hostname.substr(0, hostname.find(":"));
 	std::vector<Config>::iterator it = configs.begin();
 	while (it != configs.end())
@@ -160,14 +160,14 @@ Config	TCPServer::getConfigClient(int sock)
 		{
 			return (*it);
 	
+			size_t i = -1;
+			while (++i < it->get_server_names().size())
+			{
+				if (hostname == it->get_server_names()[i] || hostname == "localhost")
+					return (*it);
+			}
 			// std::vector<std::string>::iterator it2 = it->get_server_names().begin();
 			// printVector(it->get_server_names());
-			// size_t i = -1;
-			// while (++i < it->get_server_names().size())
-			// {
-			// 	if (hostname == it->get_server_names()[i] || hostname == "localhost")
-			// 		return (*it);
-			// }
 			// while (it->get_server_names().size() && it2 != it->get_server_names().end())
 			// {
 			// 	if (hostname == *it2 || hostname == "localhost")
@@ -196,8 +196,9 @@ void	TCPServer::runServer()
 		{
 			for(i = 0; i < (fdMax + 1); i++)
 			{
-				if (clients[i].isKeepAlive && !handleTimeOut(i, &FDSRead, &FDSWrite) && i != existSocket(i))
-						continue;
+				if (clients[i].isKeepAlive)
+				 	handleTimeOut(i, &FDSRead, &FDSWrite);
+						// continue;
 				if (FD_ISSET(i, &FDSRead) && (j = existSocket(i)))
 				{
 					if (!acceptConnection(j, &FDSRead))
@@ -208,7 +209,7 @@ void	TCPServer::runServer()
 					if (FD_ISSET(i, &FDSRead))
 					{
 						readRoutine(i, &FDSRead, &FDSWrite);
-						if (clients[i].getReadNum() == 0)
+						if (clients[i].getReadNum() == 0 )
 						{
 							initClient(i);
 							std::cout << clients[i].body << std::endl;
@@ -229,6 +230,7 @@ void	TCPServer::runServer()
 			}
 		}
 	}
+	std::cout << "server is closed" << std::endl;
 	for (i = 0; i < static_cast<int>(serverSockets.size()); i++)
 		close(serverSockets[i]);
 }
@@ -313,7 +315,7 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 // =============================================================================
 void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 {
-	// (void) FDSRead;
+	(void) FDSRead;
   	std::ostringstream response;
 	response << clients[sock].httpRequest->getResponse();
 	std::string str = response.str();

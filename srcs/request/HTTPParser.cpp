@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/20 12:16:14 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/20 15:11:11 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,7 +311,7 @@ Status	HTTPParser::getStatus(void) const
 	return (status);
 }
 
-void	HTTPParser::setConfig(Config config)
+void	HTTPParser::setConfig(const Config &config)
 {
 	this->config = config;
 }

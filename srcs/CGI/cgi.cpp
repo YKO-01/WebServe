@@ -13,15 +13,6 @@
 CGI::CGI(std::map<std::string, std::string> envi)
 {
     this->_env = envi;
-    _env["SERVER_NAME"] = "server";
-    _env["SERVER_PORT"] = "8081";
-    _env["REQUEST_METHOD"] = "GET";
-    _env["PATH_INFO"] = "/Users/ayakoubi/Desktop/webserv/src/CGI";
-    _env["SCRIPT_NAME"] = "/script.sh";
-    _env["QUERY_STRING"] = "name=value1&password=value2";
-    _env["CONTENT_TYPE"] = "text/html;";
-    _env["CONTENT_LENGTH"] = "1";
-
 }
 
 char** CGI::set_env()

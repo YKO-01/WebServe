@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 11:42:35 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/16 09:17:33 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/20 15:11:04 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ class HTTPParser : public IHTTPParser
 		Config	getConfig(void) const;
 		String	getBody(void) const;
 		void	destroyParsedData(void);
-		void	setConfig(Config config);
+		void	setConfig(const Config &config);
 		void	setBody(const String& body);
 		http_encoding_t		getEncodingType(void);
 		http_keepalive_t	getConnectionType(void);
