@@ -14,7 +14,7 @@
 # ==============================================================================
 NAME		=	webserv
 CPP			=	c++
-CPPFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address
+CPPFLAGS	=	-g -fsanitize=address #-Wall -Wextra -Werror 
 INC			=	incs
 OBJDIR		=	objs
 SRCDIR		=	srcs
@@ -28,7 +28,7 @@ SRCMAIN		=	main
 SRCSERV		:=	TCPServer TCPUtils Client
 SRCCNFG		:=	parsing utils geter_setter
 SRCREQ		:=	HTTPParser HTTPRequest HTTPResponse HTTPDelete HTTPGet HTTPPost utils/Utils utils/ResponseUtility
-SRCCGI		:=	Cgi
+SRCCGI		:=	cgi
 SRCSESS		:=	
 
 OBJMAIN		:=	$(addprefix $(OBJDIR)/, $(addsuffix .o, $(SRCMAIN)))

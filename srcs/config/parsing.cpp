@@ -501,10 +501,10 @@ void	Config::parssConfigs(char **av)
         } 
         else if (inServerBlock) 
         {
-            if(myText[myText.find(":")] != ':' || get_count(myText,':',3) != 1)
-                ft_exit("error :");
-        	if(get_count(myText,'\t',0) < 1 || has_space_in_front(trim_tabs(myText)) == 1)
-                    ft_exit("error tabs or space or :");
+            if(myText[myText.find(":")] != ':' || get_count(myText,':',3) != 1){
+                ft_exit("error :");}
+        	if(get_count(myText,'\t',0) < 1 || has_space_in_front(trim_tabs(myText)) == 1){
+                ft_exit("error tabs or space or :");}
         	vct.push_back(myText);
         }
         // i++;

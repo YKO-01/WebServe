@@ -14,6 +14,7 @@
 # define RESPONSEUTILITY_HPP
 
 # include "../../../incs/http.h"
+# include <ctime>
 
 namespace ResponseUtility
 {

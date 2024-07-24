@@ -19,6 +19,7 @@
 # include "IHTTPMethod.hpp"
 
 # include "utils/Utils.hpp"
+# include <cstring>
 
 class HTTPDelete : public IHTTPMethod
 {

@@ -142,7 +142,7 @@ void printVector(std::vector<std::string> vec)
 
 // __ Get Config Client ________________________________________________________
 // =============================================================================
-Config	TCPServer::getConfigClient(int sock)
+Config	&TCPServer::getConfigClient(int sock)
 {
 	struct sockaddr_in localAddr;
 	socklen_t addLen = sizeof(localAddr);
@@ -197,7 +197,7 @@ void	TCPServer::runServer()
 		{
 			for(i = 0; i < (fdMax + 1); i++)
 			{
-				if (clients[i].isKeepAlive)
+				if (clients[i].isKeepAlive == true)
 				 	handleTimeOut(i, &FDSRead, &FDSWrite);
 						// continue;
 				if (FD_ISSET(i, &FDSRead) && (j = existSocket(i)))
@@ -209,6 +209,7 @@ void	TCPServer::runServer()
 				{
 					if (FD_ISSET(i, &FDSRead))
 					{
+						clients[i].isKeepAlive = false;
 						readRoutine(i, &FDSRead, &FDSWrite);
 						if (clients[i].getReadNum() == 0 )
 						{
@@ -303,17 +304,6 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	}	
 }
 
-// __ End Read _________________________________________________________________
-// =============================================================================
-// void	TCPServer::endRead(int sock, fd_set *FDSRead, fd_set *FDSWrite)
-// {
-// 	(void) FDSRead;
-// 	(void) FDSWrite;
-	
-// }
-
-// __ Send Routine _____________________________________________________________
-// =============================================================================
 void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 {
 	(void) FDSRead;
@@ -343,7 +333,6 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	{
 		clients[sock].setSendNum(0);
 		FD_CLR(sock, FDSWrite);
-		// delete clients[sock].getHTTPParser();
 		if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_ON)
 		{
 			delete clients[sock].getHTTPParser();
@@ -372,7 +361,7 @@ bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 {
 	// (void)FDSRead;
 	(void)FDSWrite;
-	if (time(NULL) - clients[sock].lastActivity > 0.8)
+	if (time(NULL) - clients[sock].lastActivity > 10)
 	{
 		std::cout << "client with id : " << sock << " is disconnected" << std::endl;
 		if (FD_ISSET(sock, FDSRead))

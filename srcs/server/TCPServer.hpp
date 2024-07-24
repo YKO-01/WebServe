@@ -71,7 +71,7 @@ class TCPServer
 
 		void	fillVectorConfigs();
 		int		existSocket(int sock);
-		Config	getConfigClient(int sock);
+		Config	&getConfigClient(int sock);
 
 		bool	handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite);
 	//	void	setConfigs(Config &configs)

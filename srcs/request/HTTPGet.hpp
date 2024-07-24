@@ -18,6 +18,7 @@
 
 # include "IHTTPMethod.hpp"
 # include "utils/Utils.hpp"
+# include <cstring>
 
 class HTTPGet : public IHTTPMethod
 {
