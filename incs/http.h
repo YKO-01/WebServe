@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 09:11:09 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/08 09:56:20 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/21 16:38:08 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,19 @@
 # define HTTP_MAX_BUFFER 2048 /* Max length of data buffer */
 # define HTTP_MAX_VALUE 256   /* Max header field value length */
 
+# include <unistd.h>
+# include <dirent.h>
+# include <sys/stat.h>
+
+# include <map>
+# include <vector>
+# include <fstream>
+# include <sstream>
 # include <iostream>
+
+typedef std::string	String;
+typedef	std::string::iterator Iterator;
+typedef std::pair<std::string, std::string> Header;
 
 /*
  * HTTP state values...
