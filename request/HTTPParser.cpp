@@ -6,13 +6,13 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/08 16:16:56 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/21 11:02:42 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPParser.hpp"
 
-HTTPParser::HTTPParser(std::string request) : encoding(HTTP_ENCODE_LENGTH), connection(HTTP_KEEPALIVE_ON)
+HTTPParser::HTTPParser(String request) : encoding(HTTP_ENCODE_LENGTH), connection(HTTP_KEEPALIVE_ON)
 {
 	Header header;
 	Iterator it;
@@ -25,7 +25,7 @@ HTTPParser::HTTPParser(std::string request) : encoding(HTTP_ENCODE_LENGTH), conn
 
 String HTTPParser::operator[](const String& header)
 {
-	Map::iterator it;
+	std::map<String, String>::iterator it;
 
 	it = headers.find(header);
 	if (it != headers.end())
@@ -109,7 +109,7 @@ Status	HTTPParser::parseStatusLine(const Iterator begin, const Iterator end)
 
 Method	HTTPParser::parseMethod(Iterator& begin, const Iterator end)
 {
-	std::string	method;
+	String	method;
 
 	method = String(begin, end);
 	begin = end;
@@ -209,9 +209,9 @@ Uri	HTTPParser::parseUri(Iterator& begin, const Iterator end)
 Version	HTTPParser::parseVersion(Iterator& begin, const Iterator end)
 {
 	Version version;
-	std::string name;
-	std::string	major;
-	std::string	minor;
+	String name;
+	String	major;
+	String	minor;
 	std::pair<Iterator, String>	temp;
 
 	temp = Utils::parseToken(begin, end, "/");
@@ -275,17 +275,6 @@ String	HTTPParser::parseHeaderFieldValue(const Iterator begin, const Iterator en
 	return (value);
 }
 
-void	HTTPParser::destroyParsedData()
-{
-	uri.scheme.clear();
-	uri.host.clear();
-	uri.port.clear();
-	uri.resource.clear();
-	uri.query.clear();
-	uri.fragment.clear();
-	headers.clear();
-}
-
 Method	HTTPParser::getMethod(void) const
 {
 	return (method);
@@ -301,7 +290,7 @@ Version	HTTPParser::getVersion(void) const
 	return (version);
 }
 
-Map	HTTPParser::getHeaders(void) const
+std::map<String, String> HTTPParser::getHeaders(void) const
 {
 	return (headers);
 }
@@ -398,5 +387,4 @@ const char	*HTTPParser::HTTPBadHeader::what() const throw()
 
 HTTPParser::~HTTPParser()
 {
-	destroyParsedData();
 }

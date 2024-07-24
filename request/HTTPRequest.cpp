@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/08 16:52:10 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/21 11:20:01 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,15 @@ HTTPRequest::HTTPRequest(HTTPParser* parser) : parser(parser), response(new HTTP
 
 void	HTTPRequest::processRequest()
 {
-	IHTTPMethod	*builder = NULL;
+	IHTTPHandler *builder = NULL;
 
 	if (parser->getStatus() != HTTP_CONTINUE)
 	{
 		response->setStatus(parser->getStatus());
-		return (response->setBody(generateResponseBody()));
+		response->setPayload(generateResponsePayload());
+		return ;
 	}
+
 	route = getMatchedLocation();
 	if (route.get_redirect().length())
 	{
@@ -32,22 +34,24 @@ void	HTTPRequest::processRequest()
 		response->setStatus(HTTP_MOVED_PERMANENTLY);
 	}
 	else if (std::find(route.get_methods().begin(), route.get_methods().end(), parser->getMethod()) == route.get_methods().end())
+	{
 		response->setStatus(HTTP_METHOD_NOT_ALLOWED);
+	}
 	else
 	{
 		builder = buildRequest();
 		if (builder)
 			response->setStatus(builder->processResource());
 	}
+
 	if (!builder || builder->getStatus() != HTTP_OK)
-		response->setBody(generateResponseBody());
-	else
-		response->setBody(builder->getResult());
+		response->setPayload(generateResponsePayload());
+	delete builder;
 }
 
-IHTTPMethod*	HTTPRequest::buildRequest()
+IHTTPHandler*	HTTPRequest::buildRequest()
 {
-	IHTTPMethod	*builder;
+	IHTTPHandler	*builder;
 
 	switch (parser->getMethod())
 	{
@@ -58,7 +62,7 @@ IHTTPMethod*	HTTPRequest::buildRequest()
 			builder = new HTTPPost(parser, response, route);
 			break ;
 		case DELETE:
-			builder = new HTTPDelete(parser, route);
+			builder = new HTTPDelete(parser, response, route);
 			break ;
 		default:
 			builder = NULL;
@@ -85,7 +89,7 @@ Route	HTTPRequest::getMatchedLocation()
 	return (route);
 }
 
-String	HTTPRequest::generateResponseBody()
+String	HTTPRequest::generateResponsePayload()
 {
 	Status	status;
 	String	result;

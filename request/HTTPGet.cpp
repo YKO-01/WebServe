@@ -6,13 +6,13 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 18:16:21 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/08 21:28:29 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/23 11:44:01 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPGet.hpp"
 
-HTTPGet::HTTPGet(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), target(route), resource(parser->getUri().resource), response(response)
+HTTPGet::HTTPGet(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
 	this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length(), resource.length());
 }
@@ -34,18 +34,18 @@ Status	HTTPGet::processFile(String resource)
 		return (HTTP_FORBIDDEN);
 	if (target.get_useCGI() && Utils::hasCgiExtension(resource))
 	{
-		CGI cgiExecuter(getCgiEnv()); 
+		CGI cgiExecuter(initCGIEnv()); 
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
-		result = cgiExecuter.getCgiOutput();
-		(*response)["Content-Type"] = "text/html";
+		*response += cgiExecuter.get_cgi_heahers();
+		response->setPayload(cgiExecuter.getCgiOutput());
 	}
 	else
 	{
-		result = Utils::readFile(resource);
-		(*response)["Content-Type"] = Utils::identifyMimeType(resource);
+		response->setPayload(Utils::readFile(resource));
 		struct stat attrib;
 		stat(resource.c_str(), &attrib);
+		(*response)["Content-Type"] = Utils::identifyMimeType(resource);
 		(*response)["Last-Modified"] = ResponseUtility::getTime(attrib.st_mtime);
 	}
 	return (HTTP_OK);
@@ -67,7 +67,7 @@ Status	HTTPGet::processDirectory(String resource)
 	}
 	if (target.get_directory_listing())
 	{
-		result = getAutoIndex(absolute_resource);
+		response->setPayload(getAutoIndex(absolute_resource));
 		return (HTTP_OK);
 	}
 	return (HTTP_FORBIDDEN);
@@ -147,9 +147,9 @@ Status	HTTPGet::getStatus(void) const
 	return (status);
 }
 
-std::map<std::string, std::string>	HTTPGet::getCgiEnv(void)
+std::map<String, String>	HTTPGet::initCGIEnv(void)
 {
-	std::map<std::string, std::string>	env;
+	std::map<String, String>	env;
 
 	env["SERVER_SOFTWARE"] = "phantom/1.0.0";
 	env["SERVER_NAME"] = parser->getConfig().get_host();
@@ -159,6 +159,7 @@ std::map<std::string, std::string>	HTTPGet::getCgiEnv(void)
 	env["PATH_INFO"] = target.get_directory();
 	env["SCRIPT_NAME"] = resource;
 	env["QUERY_STRING"] = parser->getUri().query;
+	env["HTTP_COOKIE"] = (*parser)["cookie"];
 	return (env);
 }
 

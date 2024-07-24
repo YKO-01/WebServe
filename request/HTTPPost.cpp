@@ -6,13 +6,13 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:40:40 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/07 20:22:00 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/23 12:24:42 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPPost.hpp"
 
-HTTPPost::HTTPPost(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), target(route), resource(parser->getUri().resource), response(response)
+HTTPPost::HTTPPost(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
 	resource.erase(0, target.get_path().length());
 	absolute_resource = target.get_directory() + this->resource;
@@ -44,8 +44,8 @@ Status	HTTPPost::uploadResource(String resource)
 	if (boundary.empty())
 		return (HTTP_BAD_REQUEST);
 	Iterator	it;
-	std::string	header;
-	std::string content;
+	String	header;
+	String content;
 	std::pair<Iterator, String> parts;
 	std::pair<Iterator, String>	data;
 
@@ -70,10 +70,10 @@ Status	HTTPPost::uploadResource(String resource)
 	return (HTTP_CREATED);
 }
 
-String	HTTPPost::getFileName(std::string headers)
+String	HTTPPost::getFileName(String headers)
 {
-	std::string	header;
-	std::string filename;
+	String	header;
+	String filename;
 
 	std::istringstream ss(headers);
 	size_t	pos;
@@ -89,11 +89,15 @@ String	HTTPPost::getFileName(std::string headers)
 			}
 		}
 	}
+	if (filename.empty())
+		return (filename);
 	return (target.get_upload() + "/" + filename);
 }
 
-void	HTTPPost::writeInFile(std::string filename, std::string content)
+void	HTTPPost::writeInFile(String filename, String content)
 {
+	if (filename.empty())
+		return ;
 	std::ofstream	file(filename, std::ios::binary);
 	if (!file.is_open())
 	{
@@ -124,18 +128,19 @@ Status	HTTPPost::processFile(String resource)
 {
 	if (target.get_useCGI() && Utils::hasCgiExtension(resource))
 	{
-		CGI cgiExecuter(getCgiEnv());
+		CGI cgiExecuter(initCGIEnv());
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
-		result = cgiExecuter.getCgiOutput();
+		*response += cgiExecuter.get_cgi_heahers();
+		response->setPayload(cgiExecuter.getCgiOutput());
 		return (HTTP_OK);
 	}
 	return (HTTP_FORBIDDEN);
 }
 
-std::map<String, String>	HTTPPost::getCgiEnv(void)
+std::map<String, String>	HTTPPost::initCGIEnv(void)
 {
-	std::map<std::string, std::string>      env;
+	std::map<String, String>      env;
 
 	env["SERVER_SOFTWARE"] = "phantom/1.0.0";
 	env["SERVER_NAME"] = parser->getConfig().get_host();
@@ -147,6 +152,7 @@ std::map<String, String>	HTTPPost::getCgiEnv(void)
 	env["QUERY_STRING"] = parser->getBody();
 	env["CONTENT_TYPE"] = (*parser)["content-type"];
 	env["CONTENT_LENGTH"] = std::to_string(parser->getBody().length());
+	env["HTTP_COOKIE"] = (*parser)["cookie"];
 	return (env);
 }
 
