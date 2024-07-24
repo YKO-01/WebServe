@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 08:12:16 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/08 14:14:46 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/21 16:57:11 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ String	Utils::identifyMimeType(std::string filename)
 {
 	std::map<std::string, std::string> mime_types;
 
-	std::ifstream file("/Users/ael-mhar/Desktop/webserv/main/srcs/utils/mime.txt");
+	std::ifstream file("/Users/ael-mhar/Desktop/webserv/utils/mime.txt");
 
 	if (!file.is_open())
 		return ("");
