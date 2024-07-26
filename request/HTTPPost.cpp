@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:40:40 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/23 12:24:42 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/26 20:35:20 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ Status	HTTPPost::processFile(String resource)
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
 		*response += cgiExecuter.get_cgi_heahers();
-		response->setPayload(cgiExecuter.getCgiOutput());
+		response->setPayload(cgiExecuter.get_cgi_output());
 		return (HTTP_OK);
 	}
 	return (HTTP_FORBIDDEN);

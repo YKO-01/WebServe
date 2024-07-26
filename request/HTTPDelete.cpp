@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 13:56:27 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/23 11:44:14 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/26 20:35:41 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 HTTPDelete::HTTPDelete(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
     this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length());
+	std::cout << "resource : " << resource << std::endl;
 }
 
 Status	HTTPDelete::processResource()
@@ -62,7 +63,7 @@ Status HTTPDelete::processFile(String file)
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
 		*response += cgiExecuter.get_cgi_heahers();
-		response->setPayload(cgiExecuter.getCgiOutput());
+		response->setPayload(cgiExecuter.get_cgi_output());
 		return (HTTP_OK);
 	}
 	else

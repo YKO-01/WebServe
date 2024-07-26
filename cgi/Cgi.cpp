@@ -15,7 +15,7 @@ CGI::CGI(std::map<std::string, std::string> env) : env(env)
 {
 }
 
-std::string	CGI::getCgiOutput() const
+std::string	CGI::get_cgi_output() const
 {
 	return (output);
 }
@@ -36,62 +36,9 @@ char** CGI::set_env()
     return env;
 }
 
-std::string	CGI::get_cgi_extension(const std::string &file)
-{
-    std::string extension;
-    std::string formats[] = {"php", "sh", "cpp", "py"};
-    size_t found = file.find_last_of(".");
-    if (found != std::string::npos)
-    {
-        extension = file.substr(found + 1);
-        for (size_t i = 0; i < formats->size() ; i++)
-        {
-            if (extension == formats[i])
-                return extension;
-        }
-    }
-    return "";
-}
-
-std::string split_equal(const std::string &str)
-{
-    size_t pos = str.find("=");
-    if (pos != std::string::npos)
-        return str.substr(pos + 1);
-    return "";
-}
-
 std::vector<std::pair<std::string, std::string> > CGI::get_cgi_heahers()
 {
 	return (headers);
-}
-
-void CGI::exec_cpp(const std::string &path, char **env)
-{
-    pid_t pid = fork();
-    if (pid == -1)
-    {
-        std::cerr << "Failed to fork." << std::endl;
-        return;
-    }
-    else if (pid == 0)
-    {
-        const char* path_cpp = "/usr/bin/c++";
-        const char* args[] = { "c++", path.c_str(), "-o", "a.out", NULL };
-        execve(path_cpp, (char* const*)args, env);
-        perror("execve");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        int status;
-        waitpid(pid, &status, 0);
-        if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
-        {
-            std::cerr << "Error: failed to compile" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-    }
 }
 
 bool	CGI::exec_cgi()
@@ -119,19 +66,8 @@ bool	CGI::exec_cgi()
             close(pipefd[1]);
             exit(EXIT_FAILURE);
         }
-        close(pipefd[1]);
-        std::string ext = get_cgi_extension(path);
-        if (ext == "cpp")
-        {
-            exec_cpp(path, env);
-            char *args[] = { (char *)"./a.out", NULL };
-            execve(args[0], args, env);
-        }
-        else
-        {
-            char *args[] = { (char *)path.c_str(), NULL };
-            execve(args[0], args, env);
-        }
+		char *args[] = { (char *)path.c_str(), NULL };
+        execve(args[0], args, env);
         exit(EXIT_FAILURE);
     }
     else

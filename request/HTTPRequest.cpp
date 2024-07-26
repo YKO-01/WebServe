@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/21 11:20:01 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/26 16:54:00 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	HTTPRequest::processRequest()
 {
 	IHTTPHandler *builder = NULL;
 
+	(*response)["connection"] = parser->getConnectionType() ? "keep-alive" : "close";
 	if (parser->getStatus() != HTTP_CONTINUE)
 	{
 		response->setStatus(parser->getStatus());

@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/21 11:02:42 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/26 20:39:33 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ Status	HTTPParser::parseHeaders(Iterator& begin, const Iterator end)
 		encoding = HTTP_ENCODE_LENGTH;
 	}
 	if (!(*this)["connection"].compare("close"))
+	{
+		std::cout << "closed" << std::endl;
 		connection = HTTP_KEEPALIVE_OFF;
+	}
 	else
 		connection = HTTP_KEEPALIVE_ON;
 	if (body.length() > config.get_client_body_size())

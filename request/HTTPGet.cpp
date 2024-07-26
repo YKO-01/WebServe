@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 18:16:21 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/23 11:44:01 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/26 20:35:03 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ Status	HTTPGet::processFile(String resource)
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
 		*response += cgiExecuter.get_cgi_heahers();
-		response->setPayload(cgiExecuter.getCgiOutput());
+		response->setPayload(cgiExecuter.get_cgi_output());
 	}
 	else
 	{
@@ -157,7 +157,7 @@ std::map<String, String>	HTTPGet::initCGIEnv(void)
 	env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	env["REQUEST_METHOD"] = "GET";
 	env["PATH_INFO"] = target.get_directory();
-	env["SCRIPT_NAME"] = resource;
+	env["SCRIPT_NAME"] = resource.substr(target.get_path().length());
 	env["QUERY_STRING"] = parser->getUri().query;
 	env["HTTP_COOKIE"] = (*parser)["cookie"];
 	return (env);
