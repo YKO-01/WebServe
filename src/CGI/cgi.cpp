@@ -7,21 +7,17 @@
 #include<vector>
 #include<cstddef>
 #include<sstream>
-#include "../../incs/Config.hpp"
-#include "../../incs/Cgi.hpp"
+// #include "../config/Config.hpp"
+#include"../../incs/Cgi.hpp"
+// #include "../CGI/Cgi.hpp"
+void CGI::set_output(const std::string &output)
+{
+    this->outpute = output;
 
+}
 CGI::CGI(std::map<std::string, std::string> envi)
 {
     this->_env = envi;
-    _env["SERVER_NAME"] = "server";
-    _env["SERVER_PORT"] = "8080";
-    _env["REQUEST_METHOD"] = "GET";
-    _env["PATH_INFO"] = "/Users/hkasbaou/Desktop/WebServeTeam/src/CGI";
-    _env["SCRIPT_NAME"] = "/script.sh";
-    _env["QUERY_STRING"] = "name=value1&password=value2";
-    _env["CONTENT_TYPE"] = "text/html;";
-    _env["CONTENT_LENGTH"] = "1";
-
 }
 
 char** CGI::set_env()
@@ -53,14 +49,6 @@ std::string CGI::check_extension_file(const std::string &file)
                 return extension;
         }
     }
-    return "";
-}
-
-std::string split_equal(const std::string &str)
-{
-    size_t pos = str.find("=");
-    if (pos != std::string::npos)
-        return str.substr(pos + 1);
     return "";
 }
 
@@ -130,11 +118,13 @@ bool CGI::exec_cgi()
             char *args[] = { (char *)path.c_str(), NULL };
             execve(args[0], args, env);
         }
-        perror("execve");
+        // perror("execve");
         exit(EXIT_FAILURE);
     }
     else
     {
+        time_t start_time = time(NULL);
+        const int timeout = 5; 
         close(pipefd[1]);
         char buffer[1024];
         int bytesRead;
@@ -142,6 +132,13 @@ bool CGI::exec_cgi()
         {
             buffer[bytesRead] = '\0';
             output += buffer;
+            if (difftime(time(NULL), start_time) >= timeout)
+            {
+                std::cerr << "Execution timeout" << std::endl;
+                kill(pid, SIGKILL);
+                close(pipefd[0]);
+                return false;
+            }
         }
         close(pipefd[0]);
 
@@ -152,9 +149,14 @@ bool CGI::exec_cgi()
             return false;
         }
     }
-    this->outpute = output; 
-    std::cout << "output::" << output << std::endl;
+    set_output(output);
+    // std::cout << "output::" << output << std::endl;
     return true;
+}
+
+std::string CGI::get_output()
+{
+    return this->outpute;
 }
 int main(int ac, char **av)
 {
