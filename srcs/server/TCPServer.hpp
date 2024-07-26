@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 19:37:27 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/16 11:31:55 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:47:46 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #include "../srcs/config/Config.hpp"
 #include "../srcs/request/HTTPParser.hpp"
 #include "../srcs/request/HTTPResponse.hpp"
-#include "../CGI/Cgi.hpp"
+#include "../cgi/Cgi.hpp"
 #include "../request/utils/Utils.hpp"
 #include "TCPUtils.hpp"
 #include "Client.hpp"
@@ -37,6 +37,8 @@
 #define BUFFER_SIZE 1024
 #define MAX_CONNECTION 10
 #define SERVERPORT  5555
+
+typedef std::map<std::string, std::string> Map;
 
 class TCPServer
 {

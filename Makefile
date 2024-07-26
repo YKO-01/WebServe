@@ -6,7 +6,7 @@
 #    By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/06 12:38:17 by ayakoubi          #+#    #+#              #
-#    Updated: 2024/07/22 23:24:14 by ayakoubi         ###   ########.fr        #
+#    Updated: 2024/07/25 23:01:25 by ayakoubi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 # ==============================================================================
 NAME		=	webserv
 CPP			=	c++
-CPPFLAGS	=	-g -fsanitize=address #-Wall -Wextra -Werror 
+CPPFLAGS	=	#-g -fsanitize=address #-Wall -Wextra -Werror 
 INC			=	incs
 OBJDIR		=	objs
 SRCDIR		=	srcs
@@ -22,13 +22,13 @@ SRVDIR		=	server
 CNFDIR		=	config
 REQDIR		=	request
 SESDIR		=	session
-CGIDIR		=	CGI
+CGIDIR		=	cgi
 
 SRCMAIN		=	main
 SRCSERV		:=	TCPServer TCPUtils Client
 SRCCNFG		:=	parsing utils geter_setter
 SRCREQ		:=	HTTPParser HTTPRequest HTTPResponse HTTPDelete HTTPGet HTTPPost utils/Utils utils/ResponseUtility
-SRCCGI		:=	cgi
+SRCCGI		:=	Cgi
 SRCSESS		:=	
 
 OBJMAIN		:=	$(addprefix $(OBJDIR)/, $(addsuffix .o, $(SRCMAIN)))

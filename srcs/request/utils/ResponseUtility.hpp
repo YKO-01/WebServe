@@ -6,15 +6,14 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 18:35:06 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/16 09:27:26 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:43:04 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESPONSEUTILITY_HPP
 # define RESPONSEUTILITY_HPP
 
-# include "../../../incs/http.h"
-# include <ctime>
+# include "http.h"
 
 namespace ResponseUtility
 {

@@ -3,31 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 10:29:56 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/16 09:20:33 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/21 16:49:34 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
-#include <map>
-#include <stdbool.h>
-
+# include <map>
+# include <vector>
+# include <iostream>
 
 class   CGI
 {
     private:
-        std::map<std::string, std::string> _env;
-        std::string output;
+        std::map<std::string, std::string> env;
+        std::vector<std::pair<std::string, std::string> > headers;
+		std::string	output;
         
     public:
         CGI(std::map<std::string, std::string> _env);
-        std::string check_extension_file(const std::string &file);
+		std::string	get_cgi_extension(const std::string &file);
+		std::string	getCgiOutput() const;
+		std::vector<std::pair<std::string, std::string> > get_cgi_heahers();
         void exec_cpp(const std::string &path, char **env);
         bool exec_cgi();
-        std::string getCgiOutput();
         char** set_env();
 };

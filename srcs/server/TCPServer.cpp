@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/23 00:01:46 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/26 00:55:52 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ bool	TCPServer::initSocket()
 // =============================================================================
 bool TCPServer::acceptConnection(int serverSD, fd_set *FDSRead)
 {
-	(void) FDSRead;
+	// (void) FDSRead;
 	struct sockaddr_in conClientAdd;
 	int fdClient;
 	socklen_t clientAddLength = sizeof(conClientAdd);
@@ -111,11 +111,12 @@ bool TCPServer::acceptConnection(int serverSD, fd_set *FDSRead)
         std::cerr << "Error setting timeout\n";
         exit(1);
     }
+	//FD_SET(fdClient, FDSRead);
 	FD_SET(fdClient, &FDs);
 	if (fdMax < fdClient)
 		fdMax = fdClient;
 	clients[fdClient] = Client();
-	std::cout << "client with id : " << fdClient << " is connected" << std::endl;
+	std::cout << GREEN << BOLD << "client with id : " << fdClient << " is connected" << RESET << std::endl;
 	return (true);
 }
 
@@ -150,8 +151,16 @@ Config	&TCPServer::getConfigClient(int sock)
 	getsockname(sock, (struct sockaddr*)&localAddr, &addLen);
 	int port = ntohs(localAddr.sin_port);
 	long host = ntohl(localAddr.sin_addr.s_addr);
-	String hostname = clients[sock].getHTTPParser()->getHeaders()["host"];
-	// // String hostname = (*clients[sock].getHTTPParser())["host"];
+	//String hostname = clients[sock].getHTTPParser()->getHeaders()["host"];
+	if (clients[sock].getHTTPParser())
+		std::cout << "parser is exist for client with id " << sock << std::endl;
+	else
+	{
+		std::cout << "this client with id " << sock << "has not parser" << std::endl;
+		//clients[sock].setHTTPParser(new HTTPParser(""));
+		return (configs[1]);
+	}
+	String hostname = (*clients[sock].getHTTPParser())["host"];
 	hostname = hostname.substr(0, hostname.find(":"));
 	std::vector<Config>::iterator it = configs.begin();
 	while (it != configs.end())
@@ -186,9 +195,14 @@ Config	&TCPServer::getConfigClient(int sock)
 void	TCPServer::runServer()
 {
 	fd_set FDSRead, FDSWrite;
+	struct timeval timeout;
 	int fdNum;
 	int	i, j;
 	
+	FD_ZERO(&FDSWrite);
+	FD_ZERO(&FDSRead);
+	timeout.tv_sec = 5;
+    timeout.tv_usec = 0;
 	while (1)
 	{
 		FDSRead = FDs;
@@ -198,8 +212,8 @@ void	TCPServer::runServer()
 			for(i = 0; i < (fdMax + 1); i++)
 			{
 				if (clients[i].isKeepAlive == true)
-				 	handleTimeOut(i, &FDSRead, &FDSWrite);
-						// continue;
+				 	if (!handleTimeOut(i, &FDSRead, &FDSWrite))
+						continue;
 				if (FD_ISSET(i, &FDSRead) && (j = existSocket(i)))
 				{
 					if (!acceptConnection(j, &FDSRead))
@@ -209,9 +223,10 @@ void	TCPServer::runServer()
 				{
 					if (FD_ISSET(i, &FDSRead))
 					{
+						std::cout << "this client with id " << i << " in read" << std::endl;
 						clients[i].isKeepAlive = false;
 						readRoutine(i, &FDSRead, &FDSWrite);
-						if (clients[i].getReadNum() == 0 )
+						if (clients[i].getReadNum() == 0 && clients[i].isHeader)
 						{
 							initClient(i);
 							std::cout << clients[i].body << std::endl;
@@ -223,7 +238,8 @@ void	TCPServer::runServer()
 					}
 					else if (FD_ISSET(i, &FDSWrite) && i != existSocket(i))
 					{
-						if (clients[i].getReadNum() == 0)
+						// std::cout << "this client with id " << i << " in write" << std::endl;
+						if (clients[i].getReadNum() == 0 && clients[i].isHeader)
 						{
 							sendRoutine(i, &FDSWrite, &FDSRead);
 						}
@@ -242,9 +258,8 @@ void	TCPServer::runServer()
 void	TCPServer::initClient(int sock)
 {
 	clients[sock].setIsChunked(0);
-	clients[sock].isHeader = false;
+	//clients[sock].isHeader = false;
 	clients[sock].isBody = false;
-	clients[sock].isKeepAlive = false;
 }
 
 // __ Read Routine _____________________________________________________________
@@ -254,13 +269,18 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	char buffer[BUFFER_SIZE];
 	int	bytesNum = 0;
 
-	(void) FDSRead;
+	// (void) FDSRead;
 	memset(buffer, 0, BUFFER_SIZE);
+	std::cout << "this client with id " << sock << " in read routine" << std::endl;
 	// clients[sock].lastActivity = time(NULL);
 	if ((bytesNum = recv(sock, buffer, BUFFER_SIZE, 0)) == 0)
 	{
-		clients[sock].setReadNum(bytesNum);
+		clients[sock].setReadNum(-1);
 		FD_CLR(sock, &FDs);
+		//close(sock);
+		//clients.erase(sock);
+		std::cout << RED << "client with id : " << sock << " is empty" << RESET << std::endl;
+		//return ;
 		FD_SET(sock, FDSWrite);
 	}
 	if (bytesNum < 0)
@@ -275,9 +295,12 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	clients[sock].setRequest(clients[sock].getRequest().append(buffer, bytesNum));
 	if (!clients[sock].isHeader)
 	{
+		std::cout << "this client with id " << sock << " read header" << std::endl;
+		std::cout << YELLOW << clients[sock].getRequest() << RESET << std::endl;
 		size_t pos = clients[sock].getRequest().find("\r\n\r\n");
 		if (pos != std::string::npos)
 		{
+			std::cout << "client with id " << sock << "has header" << std::endl;
 			clients[sock].setHTTPParser(new HTTPParser(clients[sock].getRequest().substr(0, pos)));
 			clients[sock].setRequest(clients[sock].getRequest().substr(pos + 4,  clients[sock].getRequest().size()));
 			mapHeaders = clients[sock].getHTTPParser()->getHeaders();
@@ -333,6 +356,7 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	{
 		clients[sock].setSendNum(0);
 		FD_CLR(sock, FDSWrite);
+		std::cout << "this client with id " << sock << "is got for response" << std::endl;
 		if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_ON)
 		{
 			delete clients[sock].getHTTPParser();
@@ -347,12 +371,15 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 			clients[sock].setSendNum(0);
 			clients[sock].setHTTPParser(NULL);
 			clients[sock].lastActivity = time(NULL);
-			FD_SET(sock, FDSRead);
+			//FD_SET(sock, FDSRead);
+			FD_SET(sock, &FDs);
 			return ;
 		}
+		std::cout << RED << BOLD << "client with id : " << sock << " is disconnected" << RESET << std::endl;
 		delete clients[sock].getHTTPParser();
 		delete clients[sock].httpRequest;
 		clients.erase(sock);
+		//FD_CLR(sock, &FDs);
 		close(sock);
 	}
 }
@@ -363,9 +390,15 @@ bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	(void)FDSWrite;
 	if (time(NULL) - clients[sock].lastActivity > 10)
 	{
-		std::cout << "client with id : " << sock << " is disconnected" << std::endl;
+		std::cout << RED << BOLD << "client with id : " << sock << " is disconnected form keepAlive" << RESET << std::endl;
+		//std::cout << "client with id : " << sock << " is disconnected" << std::endl;
 		if (FD_ISSET(sock, FDSRead))
-			FD_CLR(sock, FDSRead);
+		{
+			//FD_CLR(sock, FDSRead);
+			FD_CLR(sock, &FDs);
+		}
+		if (FD_ISSET(sock, FDSWrite))
+			FD_CLR(sock, FDSWrite);
 		clients.erase(sock);
 		close(sock);
 		return (false);

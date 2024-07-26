@@ -3,31 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   Route.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:10 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/06/10 00:33:32 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/25 17:08:51 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <iostream>
 #include <vector>
-#include "../../incs/http.h"
+#include "http.h"
 #include <map>
+#include "Config.hpp"
 
-/*typedef enum
-{
-	GET,
-	PUT,
-	POST,
-	HEAD,
-	TRACE,
-	PATCH,
-	DELETE,
-	CONNECT,
-	OPTIONS
-}	Method;*/
+// typedef enum
+// {
+// 	GET,
+// 	PUT,
+// 	POST,
+// 	HEAD,
+// 	TRACE,
+// 	PATCH,
+// 	DELETE,
+// 	CONNECT,
+// 	OPTIONS
+// }	Method;
 class Route {
     private:
         std::string                 path;
@@ -69,6 +70,9 @@ class Route {
         // void set_cgi_bin(std::string cgi_bin);
         // void set_cgi_extension(std::string cgi_extension);
         void set_directory_listing(bool directory_listing);
+        //copy assigment 
+        // Route(const Route &route);
+        Route &operator=(const Route &route);
         
         //methods
         void clear_route();

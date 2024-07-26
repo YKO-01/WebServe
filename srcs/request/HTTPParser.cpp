@@ -6,13 +6,13 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/20 15:11:11 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/26 01:28:47 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPParser.hpp"
 
-HTTPParser::HTTPParser(std::string request) : encoding(HTTP_ENCODE_LENGTH), connection(HTTP_KEEPALIVE_ON)
+HTTPParser::HTTPParser(String request) : encoding(HTTP_ENCODE_LENGTH)
 {
 	Header header;
 	Iterator it;
@@ -25,7 +25,7 @@ HTTPParser::HTTPParser(std::string request) : encoding(HTTP_ENCODE_LENGTH), conn
 
 String HTTPParser::operator[](const String& header)
 {
-	Map::iterator it;
+	std::map<String, String>::iterator it;
 
 	it = headers.find(header);
 	if (it != headers.end())
@@ -68,10 +68,17 @@ Status	HTTPParser::parseHeaders(Iterator& begin, const Iterator end)
 			return (HTTP_BAD_REQUEST);
 		encoding = HTTP_ENCODE_LENGTH;
 	}
-	if (!(*this)["connection"].compare("close"))
-		connection = HTTP_KEEPALIVE_OFF;
-	else
+	std::cout << BLUE << "Connection: " << "$" <<(*this)["connection"] << "$" << RESET << std::endl;
+	if (!(*this)["connection"].compare("keep-alive"))
+	{
+		std::cout << GREEN << "Connection: keep-alive" << RESET << std::endl;
 		connection = HTTP_KEEPALIVE_ON;
+	}
+	else
+	{
+		std::cout << RED << "Connection: close" << RESET << std::endl;
+		connection = HTTP_KEEPALIVE_OFF;
+	}
 	if (body.length() > config.get_client_body_size())
 		return (HTTP_REQUEST_TOO_LARGE);
 	return (HTTP_CONTINUE);
@@ -109,7 +116,7 @@ Status	HTTPParser::parseStatusLine(const Iterator begin, const Iterator end)
 
 Method	HTTPParser::parseMethod(Iterator& begin, const Iterator end)
 {
-	std::string	method;
+	String	method;
 
 	method = String(begin, end);
 	begin = end;
@@ -209,9 +216,9 @@ Uri	HTTPParser::parseUri(Iterator& begin, const Iterator end)
 Version	HTTPParser::parseVersion(Iterator& begin, const Iterator end)
 {
 	Version version;
-	std::string name;
-	std::string	major;
-	std::string	minor;
+	String name;
+	String	major;
+	String	minor;
 	std::pair<Iterator, String>	temp;
 
 	temp = Utils::parseToken(begin, end, "/");
@@ -275,17 +282,6 @@ String	HTTPParser::parseHeaderFieldValue(const Iterator begin, const Iterator en
 	return (value);
 }
 
-void	HTTPParser::destroyParsedData()
-{
-	uri.scheme.clear();
-	uri.host.clear();
-	uri.port.clear();
-	uri.resource.clear();
-	uri.query.clear();
-	uri.fragment.clear();
-	headers.clear();
-}
-
 Method	HTTPParser::getMethod(void) const
 {
 	return (method);
@@ -301,7 +297,7 @@ Version	HTTPParser::getVersion(void) const
 	return (version);
 }
 
-Map	HTTPParser::getHeaders(void) const
+std::map<String, String> HTTPParser::getHeaders(void) const
 {
 	return (headers);
 }
@@ -311,7 +307,7 @@ Status	HTTPParser::getStatus(void) const
 	return (status);
 }
 
-void	HTTPParser::setConfig(const Config &config)
+void	HTTPParser::setConfig(Config config)
 {
 	this->config = config;
 }
@@ -398,5 +394,4 @@ const char	*HTTPParser::HTTPBadHeader::what() const throw()
 
 HTTPParser::~HTTPParser()
 {
-	destroyParsedData();
 }

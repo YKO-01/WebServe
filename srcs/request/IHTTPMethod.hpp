@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IHTTPMethod.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 14:23:56 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/16 09:18:06 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:56:42 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 # include <sys/stat.h>
 
 # include "../../incs/http.h"
-# include "../config/Config.hpp"
-# include "../CGI/Cgi.hpp"
+# include "config/Config.hpp"
+# include "config/Cgi.hpp"
 # include "HTTPParser.hpp"
 # include "HTTPResponse.hpp"
 

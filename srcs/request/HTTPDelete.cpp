@@ -6,13 +6,13 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 13:56:27 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/07 16:12:19 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/23 11:44:14 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPDelete.hpp"
 
-HTTPDelete::HTTPDelete(HTTPParser *parser, Route route) : parser(parser), target(route), resource(parser->getUri().resource)
+HTTPDelete::HTTPDelete(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
     this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length());
 }
@@ -58,10 +58,11 @@ Status HTTPDelete::processFile(String file)
 {
 	if (target.get_useCGI() && Utils::hasCgiExtension(file))
 	{
-		CGI cgiExecuter(getCgiEnv());
+		CGI cgiExecuter(initCGIEnv());
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
-		result = cgiExecuter.getCgiOutput();
+		*response += cgiExecuter.get_cgi_heahers();
+		response->setPayload(cgiExecuter.getCgiOutput());
 		return (HTTP_OK);
 	}
 	else
@@ -84,7 +85,7 @@ bool HTTPDelete::deleteDirectory(String folder)
 	DIR				*dir;
 	struct dirent	*dr;
 
-	std::string path;
+	String path;
 	dir = opendir(folder.c_str());
 	if (!dir)
 		return (false);
@@ -104,9 +105,9 @@ bool HTTPDelete::deleteDirectory(String folder)
 	return (!std::remove(folder.c_str()));
 }
 
-std::map<String, String>	HTTPDelete::getCgiEnv(void)
+std::map<String, String>	HTTPDelete::initCGIEnv(void)
 {
-	std::map<std::string, std::string>      env;
+	std::map<String, String>      env;
 
 	env["SERVER_SOFTWARE"] = "phantom/1.0.0";
 	env["SERVER_NAME"] = parser->getConfig().get_host();
@@ -114,6 +115,7 @@ std::map<String, String>	HTTPDelete::getCgiEnv(void)
 	env["REQUEST_METHOD"] = "DELETE";
 	env["PATH_INFO"] = target.get_directory();
 	env["SCRIPT_NAME"] = resource;
+	env["HTTP_COOKIE"] = (*parser)["cookie"];
 	return (env);
 }
 

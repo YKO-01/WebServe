@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   http.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 09:11:09 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/06/08 09:56:20 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/25 17:40:41 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,30 @@
 # define HTTP_MAX_BUFFER 2048 /* Max length of data buffer */
 # define HTTP_MAX_VALUE 256   /* Max header field value length */
 
+# include <unistd.h>
+# include <dirent.h>
+# include <sys/stat.h>
+
+# include <map>
+# include <vector>
+# include <fstream>
+# include <sstream>
 # include <iostream>
-#include <cstdint>
+
+
+/*colors*/
+
+# define RED "\033[0;31m"
+# define GREEN "\033[0;32m"
+# define YELLOW "\033[0;33m"
+# define BLUE "\033[0;34m"
+# define BOLD "\033[1m"
+# define RESET "\033[0m"
+
+
+typedef std::string	String;
+typedef	std::string::iterator Iterator;
+typedef std::pair<std::string, std::string> Header;
 
 /*
  * HTTP state values...

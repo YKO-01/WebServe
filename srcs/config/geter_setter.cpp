@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   geter_setter.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 14:32:35 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/06/09 23:59:48 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/25 17:20:18 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-// #include "Route.hpp"
+// #include "../../incs/Route.hpp"
 
 // --------  config  --------
 // getters
@@ -206,4 +206,30 @@ Route::~Route()
     redirect.clear();
     file.clear();
     default_file.clear();
+}
+
+Config &Config::operator=(const Config &Config)
+{
+    this->host = Config.host;
+    this->port = Config.port;
+    this->server_names = Config.server_names;
+    this->default_server = Config.default_server;
+    this->error_pages = Config.error_pages;
+    this->client_body_size = Config.client_body_size;
+    this->root = Config.root;
+    this->routes = Config.routes;
+    return *this;
+}
+Route &Route::operator=(const Route &route)
+{
+    this->path = route.path;
+    this->methods = route.methods;
+    this->directory = route.directory;
+    this->redirect = route.redirect;
+    this->file = route.file;
+    this->default_file = route.default_file;
+    this->upload = route.upload;
+    this->useCGI = route.useCGI;
+    this->directory_listing = route.directory_listing;
+    return *this;
 }

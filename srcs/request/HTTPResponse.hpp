@@ -6,32 +6,32 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:04 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/16 09:04:36 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:42:32 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HTTPRESPONSE_HPP
 # define HTTPRESPONSE_HPP
 
-# include <map>
 # include "IHTTPResponse.hpp"
 # include "utils/ResponseUtility.hpp"
 
 class HTTPResponse : public IHTTPResponse
 {
 	private:
-		std::string	body;
-		std::string	response;
-
 		Status status;
-		std::map<std::string, std::string>	headers;
+		String payload;
+		String response;
+		std::vector<std::pair<String, String> > headers;
+
 	public:
 		HTTPResponse();
-		std::string&	operator[](const std::string& header);
-		virtual std::string generate(void);
-		virtual	void setStatus(const Status& code);
-		virtual	Status	getStatus(void) const;
-		virtual void setBody(std::string body);
+		String& operator[](const String& header);
+		std::vector<std::pair<String, String> >& operator+=(const std::vector<std::pair<String, String> >& headers);
+		virtual String generate(void);
+		virtual Status getStatus(void) const;
+		virtual void setStatus(const Status& code);
+		virtual void setPayload(String payload);
 		~HTTPResponse();
 };
 

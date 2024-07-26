@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:22 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/16 10:32:25 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:56:53 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class Config {
     public:
         
         Config();
-		Config& operator=(const Config &config);
+		
 
         //getters
         std::string get_host();
@@ -77,6 +77,8 @@ class Config {
         void set_error_pages(int error_code, std::string error_page);
         void set_client_body_size(size_t client_body_size);
         void set_routes(Route routes);
+
+        Config &operator=(const Config &Config);
         
         
         
