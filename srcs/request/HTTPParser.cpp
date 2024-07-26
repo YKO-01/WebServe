@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/26 01:28:47 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/26 23:42:30 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,17 +68,10 @@ Status	HTTPParser::parseHeaders(Iterator& begin, const Iterator end)
 			return (HTTP_BAD_REQUEST);
 		encoding = HTTP_ENCODE_LENGTH;
 	}
-	std::cout << BLUE << "Connection: " << "$" <<(*this)["connection"] << "$" << RESET << std::endl;
 	if (!(*this)["connection"].compare("keep-alive"))
-	{
-		std::cout << GREEN << "Connection: keep-alive" << RESET << std::endl;
 		connection = HTTP_KEEPALIVE_ON;
-	}
 	else
-	{
-		std::cout << RED << "Connection: close" << RESET << std::endl;
 		connection = HTTP_KEEPALIVE_OFF;
-	}
 	if (body.length() > config.get_client_body_size())
 		return (HTTP_REQUEST_TOO_LARGE);
 	return (HTTP_CONTINUE);
