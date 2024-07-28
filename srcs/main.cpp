@@ -6,13 +6,12 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/29 16:33:35 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/06/27 21:31:48 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/27 20:05:36 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.h"
-//#include "TCPServer.hpp"
-//#include "Config.hpp"
+#include "server/TCPServer.hpp"
+#include "config/Config.hpp"
 
 int main(int ac, char **av)
 {

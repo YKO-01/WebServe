@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 19:37:27 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/24 20:47:46 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/27 20:06:22 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,9 @@
 #include <cerrno>
 #include <algorithm>
 #include "http.h"
-#include "../../incs/webserv.h"
 #include "../srcs/config/Config.hpp"
 #include "../srcs/request/HTTPParser.hpp"
 #include "../srcs/request/HTTPResponse.hpp"
-#include "../cgi/Cgi.hpp"
-#include "../request/utils/Utils.hpp"
 #include "TCPUtils.hpp"
 #include "Client.hpp"
 #include <cstring>
@@ -80,6 +77,8 @@ class TCPServer
 
 		std::string& getHeader() const;
 		std::string& getBody() const;
+
+		void	destroyConnection(int sock);
 		
 };
 

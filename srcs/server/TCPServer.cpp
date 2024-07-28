@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/26 23:44:34 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 02:14:16 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ bool	TCPServer::initSocket()
 // =============================================================================
 bool TCPServer::acceptConnection(int serverSD, fd_set *FDSRead)
 {
-	// (void) FDSRead;
+	(void) FDSRead;
 	struct sockaddr_in conClientAdd;
 	int fdClient;
 	socklen_t clientAddLength = sizeof(conClientAdd);
@@ -101,7 +101,7 @@ bool TCPServer::acceptConnection(int serverSD, fd_set *FDSRead)
 		return (false);
 	}
 	struct timeval tv;
-    tv.tv_sec = 10;
+    tv.tv_sec = 5;
     tv.tv_usec = 0;
 	if (setsockopt(fdClient, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv)) < 0) {
         std::cerr << "Error setting timeout\n";
@@ -150,20 +150,13 @@ Config	&TCPServer::getConfigClient(int sock)
 	getsockname(sock, (struct sockaddr*)&localAddr, &addLen);
 	int port = ntohs(localAddr.sin_port);
 	long host = ntohl(localAddr.sin_addr.s_addr);
-	//String hostname = clients[sock].getHTTPParser()->getHeaders()["host"];
-	if (clients[sock].getHTTPParser())
-		std::cout << "parser is exist for client with id " << sock << std::endl;
-	else
-	{
-		std::cout << "this client with id " << sock << "has not parser" << std::endl;
-		//clients[sock].setHTTPParser(new HTTPParser(""));
-		return (configs[1]);
-	}
 	String hostname = (*clients[sock].getHTTPParser())["host"];
 	hostname = hostname.substr(0, hostname.find(":"));
 	std::vector<Config>::iterator it = configs.begin();
 	while (it != configs.end())
 	{
+		if(it->get_host() == "localhost")
+			it->set_host("127.0.0.1");
 		if (host == TCPUtils::stringToLong(it->get_host()) && port == it->get_port())
 		{
 			size_t i = -1;
@@ -172,19 +165,10 @@ Config	&TCPServer::getConfigClient(int sock)
 				if (hostname == it->get_server_names()[i] || hostname == "localhost")
 					return (*it);
 			}
-			return (*it);
-			// std::vector<std::string>::iterator it2 = it->get_server_names().begin();
-			// printVector(it->get_server_names());
-			// while (it->get_server_names().size() && it2 != it->get_server_names().end())
-			// {
-			// 	if (hostname == *it2 || hostname == "localhost")
-			// 		return (*it);
-			// 	it2++;
-			// }
 		}
 		it++;
 	}
-	return (configs[1]);
+	return (configs[0]);
 }
 
 // __ run server  ______________________________________________________________
@@ -220,24 +204,30 @@ void	TCPServer::runServer()
 				{
 					if (FD_ISSET(i, &FDSRead))
 					{
-						clients[i].isKeepAlive = false;
 						readRoutine(i, &FDSRead, &FDSWrite);
-						if (clients[i].getReadNum() == 0 && clients[i].isHeader)
+						if (clients[i].getReadNum() == 0)
 						{
-							initClient(i);
-							std::cout << clients[i].body << std::endl;
-							clients[i].getHTTPParser()->setConfig(getConfigClient(i));
-							clients[i].getHTTPParser()->setBody(clients[i].getRequest());
-							clients[i].httpRequest = new HTTPRequest(clients[i].getHTTPParser());
-							clients[i].httpRequest->processRequest();
+							try
+							{
+								initClient(i);
+								if (!clients[i].getHTTPParser())
+									clients[i].setHTTPParser(new HTTPParser(""));
+								clients[i].getHTTPParser()->setConfig(getConfigClient(i));
+								clients[i].getHTTPParser()->setBody(clients[i].getRequest());
+								clients[i].httpRequest = new HTTPRequest(clients[i].getHTTPParser());
+								clients[i].httpRequest->processRequest();
+							}
+							catch(const std::exception& e)
+							{
+								std::cerr << e.what() << '\n';
+								// destroyConnection(i);
+							}
 						}
 					}
 					else if (FD_ISSET(i, &FDSWrite) && i != existSocket(i))
 					{
-						if (clients[i].getReadNum() == 0 && clients[i].isHeader)
-						{
+						if (clients[i].getReadNum() == 0)
 							sendRoutine(i, &FDSWrite, &FDSRead);
-						}
 					}
 				}
 			}
@@ -264,9 +254,8 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	char buffer[BUFFER_SIZE];
 	int	bytesNum = 0;
 
-	// (void) FDSRead;
+	(void) FDSRead;
 	memset(buffer, 0, BUFFER_SIZE);
-	std::cout << "this client with id " << sock << " in read routine" << std::endl;
 	// clients[sock].lastActivity = time(NULL);
 	if ((bytesNum = recv(sock, buffer, BUFFER_SIZE, 0)) == 0)
 	{
@@ -316,6 +305,8 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	}	
 }
 
+// __ Send Routine _____________________________________________________________
+// =============================================================================
 void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 {
 	(void) FDSRead;
@@ -364,22 +355,18 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 			return ;
 		}
 		std::cout << RED << BOLD << "client with id : " << sock << " is disconnected" << RESET << std::endl;
-		delete clients[sock].getHTTPParser();
-		delete clients[sock].httpRequest;
-		clients.erase(sock);
-		FD_CLR(sock, &FDs);
-		close(sock);
-		fdMax -= 1;
+		destroyConnection(sock);
 	}
 }
-
+// __ Handle Time Out __________________________________________________________
+// =============================================================================
 bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 {
 	// (void)FDSRead;
 	// (void)FDSWrite;
 	if (time(NULL) - clients[sock].lastActivity > 10)
 	{
-		std::cout << RED << BOLD << "client with id : " << sock << " is disconnected form keepAlive" << RESET << std::endl;
+		std::cout << RED << BOLD << "client with id : " << sock << " is disconnected by timeout" << RESET << std::endl;
 		if (FD_ISSET(sock, FDSRead))
 		{
 			FD_CLR(sock, FDSRead);
@@ -394,4 +381,18 @@ bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 		return (false);
 	}
 	return (true);
+}
+
+// __ Destroy Connection _______________________________________________________
+// =============================================================================
+void	TCPServer::destroyConnection(int sock)
+{
+	if (clients[sock].getHTTPParser())
+		delete clients[sock].getHTTPParser();
+	if (clients[sock].httpRequest)
+		delete clients[sock].httpRequest;
+	close(sock);
+	FD_CLR(sock, &FDs);
+	clients.erase(sock);
+	fdMax -= 1;
 }

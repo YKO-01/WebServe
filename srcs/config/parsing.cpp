@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/25 17:36:16 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/27 01:45:04 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,7 +289,6 @@ void router_pars(Config &sv,std::vector<std::string> infos)
         {
             std::string line;
             std::vector<Method> mtods;
-            int count_methods = 0;
             line = trim(infos[i].substr(infos[i].find(":") + 1));
             std::vector<std::string> resl;
             resl = split_stream(line,',');

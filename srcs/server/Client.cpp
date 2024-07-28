@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 11:20:35 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/16 10:04:14 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 01:38:40 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ Client::Client()
     isKeepAlive = false;
     lastActivity = time(NULL);
     httpParser = NULL;
+    httpRequest = NULL;
 }
 
 Client::~Client()
