@@ -6,21 +6,21 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/28 02:09:04 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 09:31:34 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPParser.hpp"
 
-HTTPParser::HTTPParser(String request) : encoding(HTTP_ENCODE_LENGTH)
+HTTPParser::HTTPParser(String request) : encoding(HTTP_ENCODE_LENGTH) , connection(HTTP_KEEPALIVE_OFF)
 {
 	Header header;
 	Iterator it;
 
 	it = Utils::findToken(request.begin(), request.end(), "\r\n", false);
 	status = parseStatusLine(request.begin(), it);
-	if (status != HTTP_CONTINUE)
-		throw HTTPBadVersion();
+	// if (status != HTTP_CONTINUE)
+	// 	throw HTTPBadVersion();
 	if (status == HTTP_CONTINUE)
 		status = parseHeaders(it, request.end());
 }

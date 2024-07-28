@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/28 02:21:49 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 09:34:21 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ void	TCPServer::runServer()
 							catch(const std::exception& e)
 							{
 								std::cerr << e.what() << '\n';
-								// destroyConnection(i);
+								destroyConnection(i);
 							}
 						}
 					}
@@ -243,7 +243,7 @@ void	TCPServer::runServer()
 void	TCPServer::initClient(int sock)
 {
 	clients[sock].setIsChunked(0);
-	clients[sock].isHeader = false;
+	//clients[sock].isHeader = false;
 	clients[sock].isBody = false;
 }
 
@@ -262,6 +262,7 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 		clients[sock].setReadNum(0);
 		FD_CLR(sock, &FDs);
 		FD_SET(sock, FDSWrite);
+		return ;
 	}
 	if (bytesNum < 0)
 	{
@@ -328,6 +329,7 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 		close(sock);
 		return ;
 	}
+	std::cout << BLUE << "send : " << str << RESET << std::endl;
 	if (clients[sock].getSendNum())
 	   	clients[sock].setSendNum(clients[sock].getSendNum() + bytesSend);
 	else
@@ -336,8 +338,9 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	{
 		clients[sock].setSendNum(0);
 		FD_CLR(sock, FDSWrite);
-		if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_ON)
+		if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_ON && clients[sock].isHeader)
 		{
+			std::cout << GREEN << "client with id : " << sock << " is keep alive" << RESET << std::endl;
 			delete clients[sock].getHTTPParser();
 			delete clients[sock].httpRequest;
 			clients[sock].isKeepAlive = true;
@@ -387,12 +390,12 @@ bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 // =============================================================================
 void	TCPServer::destroyConnection(int sock)
 {
+	// if (clients[sock].httpRequest)
+	// 	delete clients[sock].httpRequest;
 	if (clients[sock].getHTTPParser())
 		delete clients[sock].getHTTPParser();
-	if (clients[sock].httpRequest)
-		delete clients[sock].httpRequest;
 	close(sock);
 	FD_CLR(sock, &FDs);
 	clients.erase(sock);
-	fdMax -= 1;
+	//fdMax -= 1;
 }
