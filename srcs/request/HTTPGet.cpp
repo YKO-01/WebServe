@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 18:16:21 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/24 20:53:27 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 02:23:11 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 HTTPGet::HTTPGet(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
-	std::cout << "HTTPGet" << route.get_directory() << std::endl;
 	this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length(), resource.length());
 }
 

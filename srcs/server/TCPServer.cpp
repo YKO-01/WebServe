@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/28 02:14:16 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 02:21:49 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@ TCPServer::TCPServer(Config &configs):serverSD(-1), fdMax(-1), configs(configs.g
 
 TCPServer::~TCPServer()
 {
-	close(serverSD);
+	size_t i;
+	std::cout << "server is closed" << std::endl;
+	for (i = 0; i < serverSockets.size(); i++)
+		close(serverSockets[i]);
 }
 
 // __ Init Socket  _____________________________________________________________
@@ -233,9 +236,6 @@ void	TCPServer::runServer()
 			}
 		}
 	}
-	std::cout << "server is closed" << std::endl;
-	for (i = 0; i < static_cast<int>(serverSockets.size()); i++)
-		close(serverSockets[i]);
 }
 
 // __ Init Client ______________________________________________________________
