@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/28 09:34:21 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:04:51 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,7 +261,8 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	{
 		clients[sock].setReadNum(0);
 		FD_CLR(sock, &FDs);
-		FD_SET(sock, FDSWrite);
+		close(sock);
+		//FD_SET(sock, FDSWrite);
 		return ;
 	}
 	if (bytesNum < 0)
@@ -352,6 +353,7 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 			clients[sock].setReadNum(-1);
 			clients[sock].setSendNum(0);
 			clients[sock].setHTTPParser(NULL);
+			clients[sock].httpRequest = NULL;
 			clients[sock].lastActivity = time(NULL);
 			FD_SET(sock, FDSRead);
 			FD_SET(sock, &FDs);
@@ -390,8 +392,8 @@ bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 // =============================================================================
 void	TCPServer::destroyConnection(int sock)
 {
-	// if (clients[sock].httpRequest)
-	// 	delete clients[sock].httpRequest;
+	if (clients[sock].httpRequest)
+		delete clients[sock].httpRequest;
 	if (clients[sock].getHTTPParser())
 		delete clients[sock].getHTTPParser();
 	close(sock);

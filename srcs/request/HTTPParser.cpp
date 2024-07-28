@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/28 09:31:34 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/28 09:38:07 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ HTTPParser::HTTPParser(String request) : encoding(HTTP_ENCODE_LENGTH) , connecti
 
 	it = Utils::findToken(request.begin(), request.end(), "\r\n", false);
 	status = parseStatusLine(request.begin(), it);
-	// if (status != HTTP_CONTINUE)
-	// 	throw HTTPBadVersion();
+	if (status != HTTP_CONTINUE)
+		throw HTTPBadVersion();
 	if (status == HTTP_CONTINUE)
 		status = parseHeaders(it, request.end());
 }
