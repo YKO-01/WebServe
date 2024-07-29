@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:37:56 by ayakoubi          #+#    #+#             */
-/*   Updated: 2024/07/28 10:04:51 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 01:58:52 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,23 +208,15 @@ void	TCPServer::runServer()
 					if (FD_ISSET(i, &FDSRead))
 					{
 						readRoutine(i, &FDSRead, &FDSWrite);
-						if (clients[i].getReadNum() == 0)
+						if (clients[i].getReadNum() == 0 && clients[i].isHeader)
 						{
-							try
-							{
-								initClient(i);
-								if (!clients[i].getHTTPParser())
-									clients[i].setHTTPParser(new HTTPParser(""));
-								clients[i].getHTTPParser()->setConfig(getConfigClient(i));
-								clients[i].getHTTPParser()->setBody(clients[i].getRequest());
-								clients[i].httpRequest = new HTTPRequest(clients[i].getHTTPParser());
-								clients[i].httpRequest->processRequest();
-							}
-							catch(const std::exception& e)
-							{
-								std::cerr << e.what() << '\n';
-								destroyConnection(i);
-							}
+							initClient(i);
+							if (!clients[i].getHTTPParser())
+								clients[i].setHTTPParser(new HTTPParser(""));
+							clients[i].getHTTPParser()->setConfig(getConfigClient(i));
+							clients[i].getHTTPParser()->setBody(clients[i].getRequest());
+							clients[i].httpRequest = new HTTPRequest(clients[i].getHTTPParser());
+							clients[i].httpRequest->processRequest();
 						}
 					}
 					else if (FD_ISSET(i, &FDSWrite) && i != existSocket(i))
@@ -243,7 +235,7 @@ void	TCPServer::runServer()
 void	TCPServer::initClient(int sock)
 {
 	clients[sock].setIsChunked(0);
-	//clients[sock].isHeader = false;
+	clients[sock].isHeader = false;
 	clients[sock].isBody = false;
 }
 
@@ -259,10 +251,9 @@ void		TCPServer::readRoutine(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 	// clients[sock].lastActivity = time(NULL);
 	if ((bytesNum = recv(sock, buffer, BUFFER_SIZE, 0)) == 0)
 	{
-		clients[sock].setReadNum(0);
-		FD_CLR(sock, &FDs);
-		close(sock);
-		//FD_SET(sock, FDSWrite);
+		std::cout << RED << "client with id : " << sock << " is disconnected by client" << RESET << std::endl;
+		clients[sock].setReadNum(-1);
+		destroyConnection(sock);
 		return ;
 	}
 	if (bytesNum < 0)
@@ -327,10 +318,9 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	{
 		std::cout << std::strerror(errno) << std::endl;
 		FD_CLR(sock, FDSWrite);
-		close(sock);
+		destroyConnection(sock);
 		return ;
 	}
-	std::cout << BLUE << "send : " << str << RESET << std::endl;
 	if (clients[sock].getSendNum())
 	   	clients[sock].setSendNum(clients[sock].getSendNum() + bytesSend);
 	else
@@ -339,7 +329,7 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 	{
 		clients[sock].setSendNum(0);
 		FD_CLR(sock, FDSWrite);
-		if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_ON && clients[sock].isHeader)
+		if (clients[sock].getHTTPParser()->getConnectionType() == HTTP_KEEPALIVE_ON)
 		{
 			std::cout << GREEN << "client with id : " << sock << " is keep alive" << RESET << std::endl;
 			delete clients[sock].getHTTPParser();
@@ -359,7 +349,6 @@ void	TCPServer::sendRoutine(int sock, fd_set *FDSWrite, fd_set *FDSRead)
 			FD_SET(sock, &FDs);
 			return ;
 		}
-		std::cout << RED << BOLD << "client with id : " << sock << " is disconnected" << RESET << std::endl;
 		destroyConnection(sock);
 	}
 }
@@ -392,6 +381,7 @@ bool	TCPServer::handleTimeOut(int sock, fd_set *FDSRead, fd_set *FDSWrite)
 // =============================================================================
 void	TCPServer::destroyConnection(int sock)
 {
+	std::cout << RED << BOLD << "client with id : " << sock << " is disconnected" << RESET << std::endl;
 	if (clients[sock].httpRequest)
 		delete clients[sock].httpRequest;
 	if (clients[sock].getHTTPParser())
