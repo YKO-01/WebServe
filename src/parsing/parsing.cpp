@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/22 09:21:28 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/29 19:25:52 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,6 +293,10 @@ void router_pars(Config &sv,std::vector<std::string> infos)
             line = trim(infos[i].substr(infos[i].find(":") + 1));
             std::vector<std::string> resl;
             resl = split_stream(line,',');
+            std::vector<std::string>::iterator it = resl.begin();
+            for(; it != resl.end(); it++)
+                if(it->find(" ") != std::string::npos)
+                    ft_exit("router_methods:: error space");
             if(resl.size() == 0)
                 ft_exit("router_methods error nothing");
             for (size_t i = 0; i < resl.size(); i++)
@@ -367,6 +371,8 @@ void router_pars(Config &sv,std::vector<std::string> infos)
         ft_exit("router:no path found");
     if(route.get_directory().empty())
         ft_exit("router:no directory found");
+    if(route.get_methods().size() == 0)
+        route.set_methods(GET);
     sv.set_routes(route);
 }
 void check_info_exit(std::vector<Config> s)
@@ -436,6 +442,18 @@ std::vector<Config> insert_data_to_server(vecOfvecOfPair server_router_info, Con
 }
 void display_info(std::vector<Config> all_info)
 {
+    std::string methodNames[] = {
+        "GET",
+        "PUT",
+        "POST",
+        "HEAD",
+        "TRACE",
+        "PATCH",
+        "DELETE",
+        "CONNECT",
+        "OPTIONS"
+    };
+
     for (size_t i = 0; i < all_info.size(); i++)
     {
         std::cout << "-------------------------------" << std::endl;
@@ -451,7 +469,7 @@ void display_info(std::vector<Config> all_info)
             std::cout << "default_file: " << all_info[i].get_routes()[j].get_default_file() << std::endl;
             std::cout << "methods: " << std::endl;
             for (size_t k = 0; k < methods.size(); k++)
-                std::cout << "	" << methods[k] << std::endl;
+                std::cout << "	" << methodNames[methods[k]] << std::endl;
             std::cout << "directory: " << all_info[i].get_routes()[j].get_directory() << std::endl;
             std::cout << "redirect: " << all_info[i].get_routes()[j].get_redirect() << std::endl;
             std::cout << "directory_listing: " << all_info[i].get_routes()[j].get_directory_listing() << std::endl;
@@ -503,7 +521,7 @@ void	Config::parssConfigs(char **av)
     vecOfvecOfPair server_router_info = split_router(big_vec);
     Config servers;
     all_info = insert_data_to_server(server_router_info, servers);
-    // display_info(all_info);
+    display_info(all_info);
 }
 
 int main(int argc, char const *argv[])

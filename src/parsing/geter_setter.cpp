@@ -6,7 +6,7 @@
 /*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 14:32:35 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/16 11:01:02 by hkasbaou         ###   ########.fr       */
+/*   Updated: 2024/07/29 19:26:49 by hkasbaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,6 @@ void Route::clear_route()
     default_file = "index.html";
     directory_listing = false;
     useCGI = false;
-    // cgi_bin.clear();
-    // cgi_extension.clear();
 }
 void Config::clear_server()
 {
