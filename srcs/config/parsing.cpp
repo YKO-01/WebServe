@@ -6,12 +6,11 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:13 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/27 01:45:04 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:57:10 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-
 
 void Config::display_server()
 {
@@ -292,6 +291,10 @@ void router_pars(Config &sv,std::vector<std::string> infos)
             line = trim(infos[i].substr(infos[i].find(":") + 1));
             std::vector<std::string> resl;
             resl = split_stream(line,',');
+            std::vector<std::string>::iterator it = resl.begin();
+            for(; it != resl.end(); it++)
+                if(it->find(" ") != std::string::npos)
+                    ft_exit("router_methods:: error space");
             if(resl.size() == 0)
                 ft_exit("router_methods error nothing");
             for (size_t i = 0; i < resl.size(); i++)
@@ -366,6 +369,8 @@ void router_pars(Config &sv,std::vector<std::string> infos)
         ft_exit("router:no path found");
     if(route.get_directory().empty())
         ft_exit("router:no directory found");
+    if(route.get_methods().size() == 0)
+        route.set_methods(GET);
     sv.set_routes(route);
 }
 void check_info_exit(std::vector<Config> s)

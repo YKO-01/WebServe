@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPGet.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 18:16:21 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/28 02:23:11 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:28:29 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 HTTPGet::HTTPGet(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
-	this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length(), resource.length());
+	this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length());
 }
 
 Status HTTPGet::processResource()
@@ -38,7 +38,9 @@ Status	HTTPGet::processFile(String resource)
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
 		*response += cgiExecuter.get_cgi_heahers();
-		response->setPayload(cgiExecuter.getCgiOutput());
+		response->setPayload(cgiExecuter.get_cgi_output());
+		if (!(*response)["Location"].empty())
+			return (HTTP_FOUND);
 	}
 	else
 	{
@@ -61,7 +63,7 @@ Status	HTTPGet::processDirectory(String resource)
 	if (!target.get_default_file().empty())
 	{
 		resource = absolute_resource + target.get_default_file();
-		this->resource = target.get_default_file();
+		this->resource += target.get_default_file();
 		if (!access(resource.c_str(), F_OK))
 			return (processFile(resource));
 	}
@@ -83,9 +85,9 @@ String	HTTPGet::getAutoIndex(String resource)
 	if (!directory)
 		;
 	index ="<html>\r\n";
-	index += "<head><title>Index of " + target.get_path() + this->resource + "</title></head>\r\n";
+	index += "<head><title>Index of " + target.get_path() + "/" + this->resource + "</title></head>\r\n";
 	index += "<body>\r\n";
-	index += "<h1>Index of " + target.get_path() + this->resource + "</h1><hr><pre>";
+	index += "<h1>Index of " + target.get_path() + "/" + this->resource + "</h1><hr><pre>";
 	index += "<a href=\"../\">../</a>\r\n";
 	dr = readdir(directory);
 	while (dr)
@@ -157,7 +159,7 @@ std::map<String, String>	HTTPGet::initCGIEnv(void)
 	env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	env["REQUEST_METHOD"] = "GET";
 	env["PATH_INFO"] = target.get_directory();
-	env["SCRIPT_NAME"] = resource;
+	env["SCRIPT_NAME"] = resource.substr(target.get_path().length());
 	env["QUERY_STRING"] = parser->getUri().query;
 	env["HTTP_COOKIE"] = (*parser)["cookie"];
 	return (env);

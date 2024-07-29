@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hkasbaou <hkasbaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 10:29:56 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/21 16:49:34 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:50:49 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include <map>
 # include <vector>
 # include <iostream>
+#include "../config/Config.hpp"
 
 class   CGI
 {
@@ -25,10 +26,8 @@ class   CGI
         
     public:
         CGI(std::map<std::string, std::string> _env);
-		std::string	get_cgi_extension(const std::string &file);
-		std::string	getCgiOutput() const;
-		std::vector<std::pair<std::string, std::string> > get_cgi_heahers();
-        void exec_cpp(const std::string &path, char **env);
         bool exec_cgi();
         char** set_env();
+		std::string	get_cgi_output() const;
+		std::vector<std::pair<std::string, std::string> > get_cgi_heahers();
 };

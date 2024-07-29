@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 14:32:35 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/28 02:09:08 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:55:13 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,11 @@ void Route::set_useCGI(bool cgi)
 void Route::set_directory_listing(bool directory_listing)
 {
     this->directory_listing = directory_listing;
+}
+
+bool	Route::is_allowed_method(Method method)
+{
+	return (std::find(methods.begin(), methods.end(), method) != methods.end());
 }
 
 //methods

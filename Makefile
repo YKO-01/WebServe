@@ -6,7 +6,7 @@
 #    By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/06 12:38:17 by ayakoubi          #+#    #+#              #
-#    Updated: 2024/07/28 01:39:12 by ayakoubi         ###   ########.fr        #
+#    Updated: 2024/07/29 22:10:32 by ayakoubi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 # ==============================================================================
 NAME		=	webserv
 CPP			=	c++
-CPPFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address
+CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 INC			=	incs
 OBJDIR		=	objs
 SRCDIR		=	srcs

@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/28 02:08:37 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 22:35:55 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	HTTPRequest::processRequest()
 {
 	IHTTPHandler *builder = NULL;
 
+	(*response)["Connection"] = parser->getConnectionType() ? "keep-alive" : "close";
 	if (parser->getStatus() != HTTP_CONTINUE)
 	{
 		response->setStatus(parser->getStatus());
@@ -33,10 +34,8 @@ void	HTTPRequest::processRequest()
 		(*response)["Location"] = route.get_redirect();
 		response->setStatus(HTTP_MOVED_PERMANENTLY);
 	}
-	else if (std::find(route.get_methods().begin(), route.get_methods().end(), parser->getMethod()) == route.get_methods().end())
-	{
+	else if (!route.is_allowed_method(parser->getMethod()))
 		response->setStatus(HTTP_METHOD_NOT_ALLOWED);
-	}
 	else
 	{
 		builder = buildRequest();
@@ -112,7 +111,7 @@ String	HTTPRequest::generateResponsePayload()
 		result += "<body><center><h1>";
 		result += std::to_string(status) + " " + code_message;
 		result += "</h1></center>\r\n";
-		result += "<hr><center>phantom/1.0.1</center></hr>\r\n";
+		result += "<hr><center>phantom/1.0.0</center></hr>\r\n";
 		result += "</body>\r\n";
 		result += "</html>\r\n";
 	}

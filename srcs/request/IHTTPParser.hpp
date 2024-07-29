@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   IHTTPParser.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 11:40:30 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/21 10:55:38 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:43:15 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IHTTPPARSER_HPP
 # define IHTTPPARSER_HPP
 
-# include "../../incs/http.h"
+# include "http.h"
 
 class IHTTPParser
 {

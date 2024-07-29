@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   IHTTPRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 07:11:30 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/05/29 21:01:08 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:43:21 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IHTTPREQUEST_HPP
 # define IHTTPREQUEST_HPP
 
-# include "../../incs/http.h"
+# include "http.h"
 
 # include <map>
 # include <vector>

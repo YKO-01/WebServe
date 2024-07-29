@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:07:10 by hkasbaou          #+#    #+#             */
-/*   Updated: 2024/07/25 17:08:51 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:42:27 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Route {
         // std::string get_cgi_bin();
         // std::string get_cgi_extension();
         bool get_directory_listing();
+		bool is_allowed_method(Method method);
         
         //setters
         void set_path(std::string path);

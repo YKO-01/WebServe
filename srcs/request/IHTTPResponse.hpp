@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   IHTTPResponse.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:21:57 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/21 11:07:28 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:43:28 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IHTTPRESPONSE_HPP
 # define IHTTPRESPONSE_HPP
 
-# include "../../incs/http.h"
+# include "http.h"
 
 class IHTTPResponse
 {

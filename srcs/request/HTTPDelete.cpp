@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 13:56:27 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/23 11:44:14 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:28:49 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 HTTPDelete::HTTPDelete(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
-    this->absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length());
+	absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length());
 }
 
 Status	HTTPDelete::processResource()
@@ -30,13 +30,13 @@ Status	HTTPDelete::processResource()
 
 Status HTTPDelete::processDirectory(String directory)
 {
-	if (directory[directory.length() - 1] != '/')
+	if (resource[resource.length() - 1] != '/')
 		return (HTTP_CONFLICT);
-	if (target.get_useCGI() && resource == target.get_path())
+	if (target.get_useCGI())
 	{
 		if (!target.get_default_file().empty())
 		{
-			resource = target.get_default_file();
+			resource += target.get_default_file();
 			if (!access((directory + resource).c_str(), F_OK))
 				return (processFile(resource));
 		}
@@ -62,7 +62,9 @@ Status HTTPDelete::processFile(String file)
 		if (!cgiExecuter.exec_cgi())
 			return (HTTP_SERVER_ERROR);
 		*response += cgiExecuter.get_cgi_heahers();
-		response->setPayload(cgiExecuter.getCgiOutput());
+		response->setPayload(cgiExecuter.get_cgi_output());
+		if (!(*response)["Location"].empty())
+			return (HTTP_FOUND);
 		return (HTTP_OK);
 	}
 	else
@@ -114,7 +116,7 @@ std::map<String, String>	HTTPDelete::initCGIEnv(void)
 	env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	env["REQUEST_METHOD"] = "DELETE";
 	env["PATH_INFO"] = target.get_directory();
-	env["SCRIPT_NAME"] = resource;
+	env["SCRIPT_NAME"] = resource.substr(target.get_path().length());
 	env["HTTP_COOKIE"] = (*parser)["cookie"];
 	return (env);
 }

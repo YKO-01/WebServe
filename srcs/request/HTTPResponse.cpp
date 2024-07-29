@@ -6,7 +6,7 @@
 /*   By: ayakoubi <ayakoubi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 11:20:12 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/29 02:02:12 by ayakoubi         ###   ########.fr       */
+/*   Updated: 2024/07/29 22:16:44 by ayakoubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ String	HTTPResponse::generate(void)
 	response += "Date: " + ResponseUtility::getTime(std::time(NULL)) + "\r\n";
 	response += "Content-Length: " + std::to_string(payload.length()) + "\r\n";
 	for (std::vector<std::pair<String, String> >::iterator it = headers.begin(); it != headers.end(); it++)
-		response += it->first + ": " + it->second+ "\r\n";
+		if (it->second.length())
+			response += it->first + ": " + it->second+ "\r\n";
 	if (status != HTTP_OK)
 		response += "Connection: close\r\n";
 	else
