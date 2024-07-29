@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 11:20:12 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/26 16:50:04 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 20:54:28 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ String	HTTPResponse::generate(void)
 	response += "Date: " + ResponseUtility::getTime(std::time(NULL)) + "\r\n";
 	response += "Content-Length: " + std::to_string(payload.length()) + "\r\n";
 	for (std::vector<std::pair<String, String> >::iterator it = headers.begin(); it != headers.end(); it++)
-		response += it->first + ": " + it->second+ "\r\n";
+		if (it->second.length())
+			response += it->first + ": " + it->second+ "\r\n";
 	response += "\r\n";
 	response += payload;
 	return (response);

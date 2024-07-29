@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 10:00:28 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/26 16:54:00 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 18:28:50 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,8 @@ void	HTTPRequest::processRequest()
 		(*response)["Location"] = route.get_redirect();
 		response->setStatus(HTTP_MOVED_PERMANENTLY);
 	}
-	else if (std::find(route.get_methods().begin(), route.get_methods().end(), parser->getMethod()) == route.get_methods().end())
-	{
+	else if (!route.is_allowed_method(parser->getMethod()))
 		response->setStatus(HTTP_METHOD_NOT_ALLOWED);
-	}
 	else
 	{
 		builder = buildRequest();
@@ -113,7 +111,7 @@ String	HTTPRequest::generateResponsePayload()
 		result += "<body><center><h1>";
 		result += std::to_string(status) + " " + code_message;
 		result += "</h1></center>\r\n";
-		result += "<hr><center>phantom/1.0.1</center></hr>\r\n";
+		result += "<hr><center>phantom/1.0.0</center></hr>\r\n";
 		result += "</body>\r\n";
 		result += "</html>\r\n";
 	}

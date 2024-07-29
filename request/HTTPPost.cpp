@@ -6,7 +6,7 @@
 /*   By: ael-mhar <ael-mhar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 14:40:40 by ael-mhar          #+#    #+#             */
-/*   Updated: 2024/07/26 20:35:20 by ael-mhar         ###   ########.fr       */
+/*   Updated: 2024/07/29 21:28:39 by ael-mhar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 HTTPPost::HTTPPost(HTTPParser *parser, HTTPResponse *response, Route route) : parser(parser), response(response), target(route), resource(parser->getUri().resource)
 {
-	resource.erase(0, target.get_path().length());
-	absolute_resource = target.get_directory() + this->resource;
+	absolute_resource = target.get_directory() + this->resource.substr(target.get_path().length());
 }
 
 Status  HTTPPost::processResource()
@@ -110,15 +109,15 @@ void	HTTPPost::writeInFile(String filename, String content)
 
 Status	HTTPPost::processDirectory(String directory)
 {
-	if (directory[directory.length() - 1] != '/')
+	if (resource[resource.length() - 1] != '/')
 	{
-		(*response)["Location"] = target.get_path() + resource + "/";
+		(*response)["Location"] = resource + "/";
 		return (HTTP_MOVED_PERMANENTLY);
 	}
 	if (!target.get_default_file().empty())
 	{
 		resource = target.get_default_file();
-		if (!access((directory + resource).c_str(), F_OK))
+		if (!access((absolute_resource + resource).c_str(), F_OK))
 			return (processFile(resource));
 	}
 	return (HTTP_FORBIDDEN);
@@ -133,6 +132,8 @@ Status	HTTPPost::processFile(String resource)
 			return (HTTP_SERVER_ERROR);
 		*response += cgiExecuter.get_cgi_heahers();
 		response->setPayload(cgiExecuter.get_cgi_output());
+		if (!(*response)["Location"].empty())
+			return (HTTP_FOUND);
 		return (HTTP_OK);
 	}
 	return (HTTP_FORBIDDEN);
@@ -148,7 +149,7 @@ std::map<String, String>	HTTPPost::initCGIEnv(void)
 	env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	env["REQUEST_METHOD"] = "POST";
 	env["PATH_INFO"] = target.get_directory();
-	env["SCRIPT_NAME"] = resource;
+	env["SCRIPT_NAME"] = resource.substr(target.get_path().length());
 	env["QUERY_STRING"] = parser->getBody();
 	env["CONTENT_TYPE"] = (*parser)["content-type"];
 	env["CONTENT_LENGTH"] = std::to_string(parser->getBody().length());

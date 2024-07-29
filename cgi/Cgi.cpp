@@ -73,11 +73,11 @@ bool	CGI::exec_cgi()
     else
     {
         close(pipefd[1]);
-        char buffer[1024];
+        char buffer[1024] = {0};
         int bytesRead;
         while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0)
         {
-            buffer[bytesRead] = '\0';
+			buffer[bytesRead] = 0;
             output += buffer;
         }
         close(pipefd[0]);
